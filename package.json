@@ -1,0 +1,28 @@
+{
+  "name": "browserify-shim",
+  "version": "0.0.0",
+  "description": "Shims non commonJS modules so they can be browserified.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "tap test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thlorenz/browserify-shim.git"
+  },
+  "keywords": [
+    "browserify",
+    "shim",
+    "jquery"
+  ],
+  "author": "Thorsten Lorenz <thlorenz@gmx.de> (thlorenz.com)",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "tap": "~0.3.3",
+    "browserify": "~1.16.6"
+  }
+}
