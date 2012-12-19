@@ -12,6 +12,12 @@ function inspect(obj, depth) {
 
 var objectLiteral = require.resolve('./fixtures/shims/object-literal');
 var jquery = require.resolve('./fixtures/shims/jquery');
+var jqueryCode = fs.readFileSync(jquery, 'utf-8');
+
+function logger(bundle) {
+  inspect(bundle);
+  inspect(bundle.wrapEntry('test', 'module.exports = { foo: "bar" }'));
+}
 
 function relativePathsGivenFullPaths () {
   var js = browserify({ debug: true })
@@ -25,21 +31,11 @@ function relativePathsGivenFullPaths () {
 
 function globalAliasesGivenFullPaths () {
   var js = browserify({ debug: true })
-    .use(shim({ alias: 'ol', path: objectLiteral, export: 'lib' }))
-    .use(shim({ alias: 'jquery', path: jquery, export: '$' }))
-    .addEntry('./fixtures/entry-global-aliases.js')
+    .use(shim({ alias: 'jquery', path: './fixtures/shims/jquery', export: '$' }))
+    .use(shim.addEntry('./fixtures/entry-global-aliases'))
     .bundle();
 
   fs.writeFileSync('./build/bundle.js', js, 'utf-8'); 
 }
 
-function logger(bundle) {
-  inspect(bundle);
-  inspect(bundle.wrapEntry('test', 'module.exports = { foo: "bar" }'));
-}
-
-
-// Need to map jquery to the actual path when browserify is resolving it
-var br = browserify({ debug: true })
-  .use(shim({ alias: 'jquery', path: jquery, export: '$' }))
-  .addEntry('./fixtures/entry-global-aliases.js');
+globalAliasesGivenFullPaths();
