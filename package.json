@@ -20,6 +20,8 @@
   "readmeFilename": "README.md",
   "devDependencies": {
     "tap": "~0.3.3",
-    "browserify": "~1.16.6"
+    "browserify": "~1.16.6",
+    "request": "~2.12.0",
+    "jsdom": "~0.3.2"
   }
 }
