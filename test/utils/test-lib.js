@@ -45,7 +45,7 @@ module.exports = function testLib(t, opts) {
     fs.unlinkSync(file);
     fs.unlinkSync(entryFile);
 
-    var ctx = { window: jsdom(html).createWindow(), console: console, setTimeout: function () {} }
+    var ctx = jsdom(html).createWindow();
     require('vm').runInNewContext(src, ctx);
 
     runTest(t, ctx.require('/entry-straight-export'));
