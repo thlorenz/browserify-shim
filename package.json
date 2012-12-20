@@ -3,11 +3,8 @@
   "version": "0.0.0",
   "description": "Shims non commonJS modules so they can be browserified.",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
-    "test": "tap test/*"
+    "test": "tap test/*.js"
   },
   "repository": {
     "type": "git",

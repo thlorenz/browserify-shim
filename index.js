@@ -9,7 +9,6 @@ module.exports = function shim(config) {
   if (!config || !config.alias || !config.path || !config.export) 
     throw new Error('browserify-shim needs at least an alias, a path and an export to do its job');
 
-
   var resolvedPath = require.resolve(path.resolve(buildScriptDir, config.path))
     , content = fs.readFileSync(resolvedPath, 'utf-8')
     , exported = content + ';\nmodule.exports = window.' + config.export + ';';
