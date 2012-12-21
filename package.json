@@ -4,7 +4,8 @@
   "description": "Shims non commonJS modules so they can be browserified.",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "tap test/*.js",
+    "shim-jquery": "cd examples/shim-jquery && node build.js && open index.html"
   },
   "repository": {
     "type": "git",
