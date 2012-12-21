@@ -13,7 +13,7 @@ fs.writeFileSync(builtFile, bundled);
 
 ## Features
 
-- allows non commonJS modules to be shimmed in order to be browserified by specifying an alias, the path to the file and
+- allows **non commonJS** modules to be shimmed in order to be **browserified** by specifying an alias, the path to the file and
   the identifier under which the module attaches itself to the global window object
 - **TODO**: allows commonJS modules that are not residing in your `node_modules` to be loaded from a specific path
 
@@ -21,3 +21,7 @@ fs.writeFileSync(builtFile, bundled);
 
 - in order for browserify-shim to work correctly, you must not use browserify's built in `addEntry(..)`, but
   `use(shim.addEntry(..))` instead (see example)
+
+## Examples
+
+- [shim-jquery](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery)

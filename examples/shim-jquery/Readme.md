@@ -1,4 +1,4 @@
-# Browserify-Shim Jquery Example
+# Browserify-Shim jquery Example
 
 This example demonstrates using a shim fo jquery.
 
