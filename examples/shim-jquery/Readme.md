@@ -18,13 +18,8 @@ To run this example:
     npm install browserify-shim
     npm explore browserify-shim
 
-Followed simply by:
-
-    npm run shim-jquery
-
-Or in case you like to type:
-
     cd examples/shim-jquery
 
+    npm install
     node build.js
     open index.html
