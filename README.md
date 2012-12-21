@@ -3,6 +3,9 @@
 Shims non commonJS modules so they can be browserified.
 
 ```js
+var browserify = require('browserify')
+  , shim = require('browserify-shim');
+
 var bundled = browserify({ debug: true })
   .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', export: '$' }))
   .use(shim.addEntry('./js/entry.js'))
