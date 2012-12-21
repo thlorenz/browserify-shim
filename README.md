@@ -10,6 +10,9 @@ var bundled = browserify({ debug: true })
 
 fs.writeFileSync(builtFile, bundled);
 ```
+## Install
+
+    npm install browserify-shim
 
 ## Features
 
