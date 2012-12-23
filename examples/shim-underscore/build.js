@@ -23,15 +23,12 @@ function bundle() {
   console.log('Build succeeded, open index.html to see the result.');
 }
 
-bundle();
-
-
 // Normally underscore-min.js would be in vendor folder already, but I wanted to avoid spreading underscores all over github ;)
 // So lets download underscore and then run the bundler.
-/*request('http://code.underscore.com/underscore-1.8.3.min.js', function(err, resp, body) {
+request('http://underscorejs.org/underscore-min.js', function(err, resp, body) {
   var underscoreFile = path.join(__dirname, 'js/vendor/underscore-min.js');
 
   fs.writeFileSync(underscoreFile, body);
 
   bundle();
-});*/
+});
