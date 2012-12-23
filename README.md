@@ -1,6 +1,7 @@
 # browserify-shim [![build status](https://secure.travis-ci.org/thlorenz/browserify-shim.png)](http://travis-ci.org/thlorenz/browserify-shim)
 
-Shims modules that aren't installed as `npm` modules so they can be browserified even if they aren't commonJS compliant.
+Shims modules that aren't installed as `npm` modules so they can be browserified even if they aren't commonJS
+compatible.
 
 ```js
 var browserify = require('browserify')
@@ -14,6 +15,7 @@ var bundled = browserify({ debug: true })
     // underscore is commonJS compliant, so no further export is needed which we specify by assiging it 'null'
   .use(shim({ alias: 'underscore', path: './js/vendor/underscore.js', export: null }))
 
+    // it is important to use shim.addEntry instead addEntry supplied by browserify
   .use(shim.addEntry('./js/entry.js'))
   .bundle();
 
