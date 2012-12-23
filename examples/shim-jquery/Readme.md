@@ -18,7 +18,13 @@ To run this example:
     npm install browserify-shim
     npm explore browserify-shim
 
-    cd examples/shim-underscore
+Then:
+
+    npm run shim-jquery
+
+Or if you enjoy typing a lot:
+
+    cd examples/shim-jquery
 
     npm install
     node build.js
