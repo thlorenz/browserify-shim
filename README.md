@@ -12,10 +12,10 @@ var bundled = browserify({ debug: true })
     // jquery attaches itself to the window as '$' so we assign the export accordingly
   .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', export: '$' }))
 
-    // underscore is commonJS compliant, so no further export is needed which we specify by assiging it 'null'
+    // underscore is commonJS compliant, so no further export is needed which we specify by assigning it 'null'
   .use(shim({ alias: 'underscore', path: './js/vendor/underscore.js', export: null }))
 
-    // it is important to use shim.addEntry instead addEntry supplied by browserify
+    // it is important to use shim.addEntry instead of addEntry supplied by browserify
   .use(shim.addEntry('./js/entry.js'))
   .bundle();
 
