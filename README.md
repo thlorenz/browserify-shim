@@ -1,18 +1,25 @@
 # browserify-shim [![build status](https://secure.travis-ci.org/thlorenz/browserify-shim.png)](http://travis-ci.org/thlorenz/browserify-shim)
 
-Shims non commonJS modules so they can be browserified.
+Shims modules that aren't installed as `npm` modules so they can be browserified even if they aren't commonJS compliant.
 
 ```js
 var browserify = require('browserify')
   , shim = require('browserify-shim');
 
 var bundled = browserify({ debug: true })
+
+    // jquery attaches itself to the window as '$' so we assign the export accordingly
   .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', export: '$' }))
+
+    // underscore is commonJS compliant, so no further export is needed which we specify by assiging it 'null'
+  .use(shim({ alias: 'underscore', path: './js/vendor/underscore.js', export: null }))
+
   .use(shim.addEntry('./js/entry.js'))
   .bundle();
 
 fs.writeFileSync(builtFile, bundled);
 ```
+
 ## Install
 
     npm install browserify-shim
@@ -31,3 +38,4 @@ fs.writeFileSync(builtFile, bundled);
 ## Examples
 
 - [shim-jquery](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery)
+- [shim-underscore](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-underscore)
