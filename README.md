@@ -21,7 +21,7 @@ fs.writeFileSync(builtFile, bundled);
 
 - allows **non commonJS** modules to be shimmed in order to be **browserified** by specifying an alias, the path to the file and
   the identifier under which the module attaches itself to the global window object
-- **TODO**: allows commonJS modules that are not residing in your `node_modules` to be loaded from a specific path
+- allows commonJS modules that are not residing in your `node_modules` to be loaded from a specific path
 
 ## Limitations
 
