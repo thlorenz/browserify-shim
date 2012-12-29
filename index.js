@@ -2,7 +2,8 @@
 
 var path = require('path')
   , fs = require('fs')
-  , buildScriptDir = path.dirname(module.parent.filename);
+  , buildScriptDir = path.dirname(module.parent.filename)
+  , re = /^require\(".+"\);$/mg;
 
 module.exports = shim;
 module.exports.addEntry = shimAddEntry;
@@ -28,8 +29,12 @@ function shim(config) {
         : content;
 
   return function (bundle) {
-    var wrapped = bundle.wrap(config.alias, exported);
-    bundle.ignore(config.alias).append(wrapped);
+    var position = -1;
+    // possibly need to to this after bundle was created 
+    for (var match = re.exec(bundle); match; match = re.exec(bundle)) position = match.index;
+
+    var output = [bundle.slice(0, position), , bundle.slice(position)].join('\n');
+    bundle.ignore(config.alias); //.append(wrapped);
   };
 }
 
