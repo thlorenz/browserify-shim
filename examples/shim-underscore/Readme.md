@@ -13,8 +13,9 @@ var bundled = browserify({ debug: true })
   // setting export: null to denote that underscore is a commonJS module and doesn't need 
   // window property to be exported
   .use(shim({ alias: 'underscore', path: './js/vendor/underscore-min.js', export: null }))
-  .use(shim.addEntry('./js/entry.js'))
-  .bundle();
+  .addEntry('./js/entry.js')
+  .bundle()
+  .shim();
 
 fs.writeFileSync(builtFile, bundled);
 ```

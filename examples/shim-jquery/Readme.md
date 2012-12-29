@@ -7,8 +7,9 @@ The main part where it all happens is this snippet:
 ```js
 var bundled = browserify({ debug: true })
   .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', export: '$' }))
-  .use(shim.addEntry('./js/entry.js'))
-  .bundle();
+  .addEntry('./js/entry.js')
+  .bundle()
+  .shim();
 
 fs.writeFileSync(builtFile, bundled);
 ```
