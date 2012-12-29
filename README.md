@@ -15,9 +15,11 @@ var bundled = browserify({ debug: true })
     // underscore is commonJS compliant, so no further export is needed which we specify by assigning it 'null'
   .use(shim({ alias: 'underscore', path: './js/vendor/underscore.js', export: null }))
 
-    // it is important to use shim.addEntry instead of addEntry supplied by browserify
-  .use(shim.addEntry('./js/entry.js'))
-  .bundle();
+  .addEntry('./js/entry.js')
+  .bundle()
+
+  // it is important to call shim after bundle in order to inject shims registered via .use(shim(..)) 
+  .shim();
 
 fs.writeFileSync(builtFile, bundled);
 ```
@@ -31,11 +33,6 @@ fs.writeFileSync(builtFile, bundled);
 - allows **non commonJS** modules to be shimmed in order to be **browserified** by specifying an alias, the path to the file and
   the identifier under which the module attaches itself to the global window object
 - allows commonJS modules that are not residing in your `node_modules` to be loaded from a specific path
-
-## Limitations
-
-- in order for browserify-shim to work correctly, you must not use browserify's built in `addEntry(..)`, but
-  `use(shim.addEntry(..))` instead (see example)
 
 ## Examples
 
