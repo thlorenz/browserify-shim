@@ -21,7 +21,10 @@ var html =
 
 function generateEntry(alias) {
   // just pass in exported shim in order to ensure it can be required
-  return 'module.exports = require("' + alias + '");\n' 
+  return (
+      // expose require in order to support testing
+        'window.require = require;\n'
+      + 'module.exports = require("' + alias + '");\n')
 }
 
 module.exports = function testLib(t, opts) {
@@ -39,8 +42,9 @@ module.exports = function testLib(t, opts) {
 
     var src = require('browserify')({ debug: true })
       .use(shim(shimConfig))
-      .use(shim.addEntry('../fixtures/entry-straight-export.js'))
-      .bundle();
+      .addEntry(__dirname + '/../fixtures/entry-straight-export.js')
+      .bundle()
+      .shim()
 
     fs.unlinkSync(file);
     fs.unlinkSync(entryFile);
@@ -48,6 +52,6 @@ module.exports = function testLib(t, opts) {
     var ctx = jsdom(html).createWindow();
     require('vm').runInNewContext(src, ctx);
 
-    runTest(t, ctx.require('/entry-straight-export'));
+    runTest(t, ctx.window.require('/entry-straight-export'));
   });
 };

@@ -9,12 +9,13 @@ test('when I shim a commonJS module in order to alias it without installing it a
   
   var src = browserify({ debug: true })
     .use(shim({ alias: 'cjs', path: './fixtures/shims/commonjs-module', export: null }))
-    .use(shim.addEntry('./fixtures/entry-requires-cjs'))
-    .bundle();
+    .addEntry(__dirname + '/fixtures/entry-requires-cjs.js')
+    .bundle()
+    .shim()
 
-  var ctx = {};
+  var ctx = { window: {} };
   vm.runInNewContext(src, ctx);
 
-  t.equal(ctx.require('/entry-requires-cjs'), 'super duper export', 'requires cjs properly from the given path');
+  t.equal(ctx.window.require('/entry-requires-cjs'), 'super duper export', 'requires cjs properly from the given path');
   t.end()
 });

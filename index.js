@@ -2,11 +2,15 @@
 
 var path = require('path')
   , fs = require('fs')
+  , getInjectPosition = require('./lib/get-injectposition')
   , buildScriptDir = path.dirname(module.parent.filename)
-  , re = /^require\(".+"\);$/mg;
+  , shimmed = [] 
+  ;
 
-module.exports = shim;
-module.exports.addEntry = shimAddEntry;
+module.exports        =  shim;
+
+// bad, bad, bad, but results in so much nicer API and since this will only run as part of the browserify bundle script it's ok, right?
+String.prototype.shim = function () { return injectShimsInto(this); };
 
 function validate(config) {
   if (!config) 
@@ -29,23 +33,17 @@ function shim(config) {
         : content;
 
   return function (bundle) {
-    var position = -1;
-    // possibly need to to this after bundle was created 
-    for (var match = re.exec(bundle); match; match = re.exec(bundle)) position = match.index;
-
-    var output = [bundle.slice(0, position), , bundle.slice(position)].join('\n');
-    bundle.ignore(config.alias); //.append(wrapped);
+    var wrapped = bundle.wrap(config.alias, exported);
+    bundle.ignore(config.alias); 
+    shimmed.push(wrapped);
   };
 }
 
-function shimAddEntry(file) {
-  var resolvedPath = require.resolve(path.resolve(buildScriptDir, file))
-    , content = fs.readFileSync(resolvedPath, 'utf-8')
-    , alias = '/' + path.basename(resolvedPath);
+function injectShimsInto(src) {
+  if (!shimmed.length) throw new Error('unable to shims the bundle because no shims were registered via: bundle.use(shim(..))');
 
-  return function (bundle) {
-    var entry = bundle.wrapEntry(alias, content);
-    bundle.append(entry);
-  };
+  var position = getInjectPosition(src);
+  if (position < 0) throw new Error('unable to shim the given bundle because shim inject position could not be found');
+
+  return [ src.slice(0, position), shimmed.join('\n') + '\n', src.slice(position) ].join('');
 }
-
