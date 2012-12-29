@@ -13,9 +13,9 @@ function bundle() {
 
   var bundled = browserify({ debug: true })
     .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', export: '$' }))
-    // Need to use shim.addEntry in order to work (instead of browserify's built in 'addEntry')
-    .use(shim.addEntry('./js/entry.js'))
-    .bundle();
+    .addEntry('./js/entry.js')
+    .bundle()
+    .shim();
 
   fs.writeFileSync(builtFile, bundled);
 
