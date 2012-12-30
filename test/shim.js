@@ -8,7 +8,7 @@ var browserify = require('browserify')
 test('when I shim "jquery" to a crippled jquery file and require it inside the entry file', function (t) {
   
   var src = browserify({ debug: true })
-    .use(shim({ alias: 'jquery', path: './fixtures/shims/crippled-jquery', export: '$' }))
+    .use(shim({ alias: 'jquery', path: './fixtures/shims/crippled-jquery', exports: '$' }))
     .addEntry(__dirname + '/fixtures/entry-requires-jquery.js')
     .bundle()
     .shim()

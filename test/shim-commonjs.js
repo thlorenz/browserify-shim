@@ -8,7 +8,7 @@ var browserify = require('browserify')
 test('when I shim a commonJS module in order to alias it without installing it as a node_module', function (t) {
   
   var src = browserify({ debug: true })
-    .use(shim({ alias: 'cjs', path: './fixtures/shims/commonjs-module', export: null }))
+    .use(shim({ alias: 'cjs', path: './fixtures/shims/commonjs-module', exports: null }))
     .addEntry(__dirname + '/fixtures/entry-requires-cjs.js')
     .bundle()
     .shim()

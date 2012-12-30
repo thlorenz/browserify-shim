@@ -6,7 +6,7 @@ var testLib = require('./utils/test-lib')
   , baseUrl = 'https://github.com/bartaz/impress.js/raw/'
 
 test('impressjs 0.5.3', function (t) {
-  var shimConfig = { alias: 'impressjs', export: 'impress' }
+  var shimConfig = { alias: 'impressjs', exports: 'impress' }
   t.plan(1)
   testLib(t, { 
       name: 'impress.js'

@@ -6,7 +6,7 @@ The main part where it all happens is this snippet:
 
 ```js
 var bundled = browserify({ debug: true })
-  .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', export: '$' }))
+  .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }))
   .addEntry('./js/entry.js')
   .bundle()
   .shim();

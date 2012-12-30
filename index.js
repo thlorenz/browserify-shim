@@ -7,20 +7,20 @@ var path = require('path')
   , shimmed = [] 
   ;
 
-module.exports        =  shim;
+module.exports = shim;
 
 // bad, bad, bad, but results in so much nicer API and since this will only run as part of the browserify bundle script it's ok, right?
 String.prototype.shim = function () { return injectShimsInto(this); };
 
 function validate(config) {
   if (!config) 
-    throw new Error('browserify-shim needs at least an alias, a path and an export to do its job, you are missing the entire config.');
+    throw new Error('browserify-shim needs at least an alias, a path and an exports to do its job, you are missing the entire config.');
   if (!config.hasOwnProperty('alias'))
-    throw new Error('browserify-shim needs at least an alias, a path and an export to do its job, you are missing the alias.');
+    throw new Error('browserify-shim needs at least an alias, a path and an exports to do its job, you are missing the alias.');
   if (!config.hasOwnProperty('path'))
-    throw new Error('browserify-shim needs at least an path, a path and an export to do its job, you are missing the path.');
-  if (!config.hasOwnProperty('export'))
-    throw new Error('browserify-shim needs at least an export, a path and an export to do its job, you are missing the export.');
+    throw new Error('browserify-shim needs at least an path, a path and an exports to do its job, you are missing the path.');
+  if (!config.hasOwnProperty('exports'))
+    throw new Error('browserify-shim needs at least an exports, a path and an exports to do its job, you are missing the exports.');
 }
 
 function shim(config) {
@@ -28,8 +28,8 @@ function shim(config) {
 
   var resolvedPath = require.resolve(path.resolve(buildScriptDir, config.path))
     , content = fs.readFileSync(resolvedPath, 'utf-8')
-    , exported = config.export 
-        ? content + ';\nmodule.exports = window.' + config.export + ';' 
+    , exported = config.exports
+        ? content + ';\nmodule.exports = window.' + config.exports + ';' 
         : content;
 
   return function (bundle) {

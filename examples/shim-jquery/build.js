@@ -12,7 +12,7 @@ function bundle() {
   var builtFile = path.join(__dirname, 'js/build/bundle.js');
 
   var bundled = browserify({ debug: true })
-    .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', export: '$' }))
+    .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }))
     .addEntry('./js/entry.js')
     .bundle()
     .shim();

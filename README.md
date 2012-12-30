@@ -9,11 +9,11 @@ var browserify = require('browserify')
 
 var bundled = browserify({ debug: true })
 
-    // jquery attaches itself to the window as '$' so we assign the export accordingly
-  .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', export: '$' }))
+    // jquery attaches itself to the window as '$' so we assign the exports accordingly
+  .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }))
 
-    // underscore is commonJS compliant, so no further export is needed which we specify by assigning it 'null'
-  .use(shim({ alias: 'underscore', path: './js/vendor/underscore.js', export: null }))
+    // underscore is commonJS compliant, so no further export is needed which we specify by assigning exports 'null'
+  .use(shim({ alias: 'underscore', path: './js/vendor/underscore.js', exports: null }))
 
   .addEntry('./js/entry.js')
   .bundle()

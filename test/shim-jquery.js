@@ -6,7 +6,7 @@ var testLib = require('./utils/test-lib')
   , baseUrl = 'http://code.jquery.com/'
 
 test('jquery versions 1.6.4 - 1.8.3', function (t) {
-  var shimConfig = { alias: 'jquery', export: '$' }
+  var shimConfig = { alias: 'jquery', exports: '$' }
   var jqs = [ 
       { name: 'jquery-1.6.4.min.js'
       , test: function (t, resolved) { t.equals(resolved().jquery, '1.6.4', 'shims jquery 1.6.4') }

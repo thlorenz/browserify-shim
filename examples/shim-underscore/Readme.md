@@ -10,9 +10,9 @@ The main part where it all happens is this snippet:
 
 ```js
 var bundled = browserify({ debug: true })
-  // setting export: null to denote that underscore is a commonJS module and doesn't need 
+  // setting exports: null to denote that underscore is a commonJS module and doesn't need 
   // window property to be exported
-  .use(shim({ alias: 'underscore', path: './js/vendor/underscore-min.js', export: null }))
+  .use(shim({ alias: 'underscore', path: './js/vendor/underscore-min.js', exports: null }))
   .addEntry('./js/entry.js')
   .bundle()
   .shim();
