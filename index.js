@@ -23,6 +23,10 @@ function validate(config) {
     throw new Error('browserify-shim needs at least an exports, a path and an exports to do its job, you are missing the exports.');
 }
 
+function bindWindow(s) {
+  return '(function browserifyShim() {\n' + s + '\n}).call(window);\n';
+}
+
 function shim(config) {
   validate(config);
 
@@ -33,7 +37,7 @@ function shim(config) {
         : content;
 
   return function (bundle) {
-    var wrapped = bundle.wrap(config.alias, exported);
+    var wrapped = bundle.wrap(config.alias, bindWindow(exported));
     bundle.ignore(config.alias); 
     shimmed.push(wrapped);
   };
