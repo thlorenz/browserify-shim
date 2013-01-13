@@ -9,6 +9,9 @@ var path = require('path')
 
 module.exports = shim;
 
+// mainly for testing purposes
+shim._reset = function _reset() { shimmed = []; };
+
 // bad, bad, bad, but results in so much nicer API and since this will only run as part of the browserify bundle script it's ok, right?
 String.prototype.shim = function () { return injectShimsInto(this); };
 
@@ -24,7 +27,7 @@ function validate(config) {
 }
 
 function bindWindow(s) {
-  return '(function browserifyShim() {\n' + s + '\n}).call(window);\n';
+  return '(function browserifyShim() {\n' + s + '\n}).call(global);\n';
 }
 
 function shim(config) {
