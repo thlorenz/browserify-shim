@@ -30,3 +30,5 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 }
 
 })( window );
+
+if(this !== window) throw new Error('this should be window');
