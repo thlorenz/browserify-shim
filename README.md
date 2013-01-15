@@ -30,9 +30,11 @@ fs.writeFileSync(builtFile, bundled);
 
 ## Features
 
-- allows **non commonJS** modules to be shimmed in order to be **browserified** by specifying an alias, the path to the file and
-  the identifier under which the module attaches itself to the global window object
-- allows commonJS modules that are not residing in your `node_modules` to be loaded from a specific path
+- shims **non commonJS** modules in order for them to be **browserified** by specifying an alias, the path to the file and
+  the identifier under which the module attaches itself to the global `window` object
+- handles even those modules out there that just declare a `var foo = ...` on the script level and assume it gets attached to the
+  `window` object since the only way they will ever be run is in the global context - "ahem, ... NO?!"
+- loads commonJS modules that are not residing in your `node_modules` from a specific path
 
 ## Examples
 
