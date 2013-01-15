@@ -1,10 +1,11 @@
 'use strict';
 
-var path = require('path')
-  , fs = require('fs')
-  , getInjectPosition = require('./lib/get-injectposition')
-  , buildScriptDir = path.dirname(module.parent.filename)
-  , registeredShims = {} 
+var path              =  require('path')
+  , fs                =  require('fs')
+  , format            =  require('util').format
+  , getInjectPosition =  require('./lib/get-injectposition')
+  , buildScriptDir    =  path.dirname(module.parent.filename)
+  , registeredShims   =  {}
   ;
 
 module.exports = shim;
@@ -32,13 +33,17 @@ function bindWindow(s) {
   return '(function browserifyShim() {\n' + s + '\n}).call(global);\n';
 }
 
+function moduleExport(exp) {
+  return format(';\nmodule.exports = typeof %s != "undefined" ? %s : window.%s;\n', exp, exp, exp);
+}
+
 function shim(config) {
   validate(config);
 
   var resolvedPath = require.resolve(path.resolve(buildScriptDir, config.path))
     , content = fs.readFileSync(resolvedPath, 'utf-8')
     , exported = config.exports
-        ? content + ';\nmodule.exports = window.' + config.exports + ';' 
+        ? content + moduleExport(config.exports)
         : content;
 
   return function (bundle) {
