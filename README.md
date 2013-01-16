@@ -16,10 +16,7 @@ var bundled = browserify({ debug: true })
   .use(shim({ alias: 'underscore', path: './js/vendor/underscore.js', exports: null }))
 
   .addEntry('./js/entry.js')
-  .bundle()
-
-  // it is important to call shim after bundle in order to inject shims registered via .use(shim(..)) 
-  .shim();
+  .bundle();
 
 fs.writeFileSync(builtFile, bundled);
 ```

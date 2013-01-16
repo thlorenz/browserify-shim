@@ -14,8 +14,7 @@ function bundle() {
   var bundled = browserify({ debug: true })
     .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }))
     .addEntry('./js/entry.js')
-    .bundle()
-    .shim();
+    .bundle();
 
   fs.writeFileSync(builtFile, bundled);
 

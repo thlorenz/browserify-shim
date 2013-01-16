@@ -16,8 +16,7 @@ function bundle() {
     // window property to be exported
     .use(shim({ alias: 'underscore', path: './js/vendor/underscore-min.js', exports: null }))
     .addEntry('./js/entry.js')
-    .bundle()
-    .shim();
+    .bundle();
 
   fs.writeFileSync(builtFile, bundled);
 
