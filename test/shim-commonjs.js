@@ -12,7 +12,6 @@ test('when I shim a commonJS module in order to alias it without installing it a
       .use(shim({ alias: 'cjs', path: './fixtures/shims/commonjs-module', exports: null }))
       .addEntry(__dirname + '/fixtures/entry-requires-cjs.js')
       .bundle()
-      .shim()
   }
 
   t.test('when bundled in debug mode', function (t) {

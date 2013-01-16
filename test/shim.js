@@ -11,7 +11,6 @@ test('when I shim "jquery" to a crippled jquery file in debug mode and require i
     .use(shim({ alias: 'jquery', path: './fixtures/shims/crippled-jquery', exports: '$' }))
     .addEntry(__dirname + '/fixtures/entry-requires-jquery.js')
     .bundle()
-    .shim()
 
   var ctx = { window: {}, console: console };
   vm.runInNewContext(src, ctx);
@@ -26,8 +25,8 @@ test('when I shim "jquery" to a crippled jquery file in non debug mode and requi
     .use(shim({ alias: 'jquery', path: './fixtures/shims/crippled-jquery', exports: '$' }))
     .addEntry(__dirname + '/fixtures/entry-requires-jquery.js')
     .bundle()
-    .shim()
 
+  console.log(src);
   var ctx = { window: {}, console: console };
   vm.runInNewContext(src, ctx);
 

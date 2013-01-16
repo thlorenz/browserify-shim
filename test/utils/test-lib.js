@@ -44,7 +44,6 @@ module.exports = function testLib(t, opts) {
       .use(shim(shimConfig))
       .addEntry(__dirname + '/../fixtures/entry-straight-export.js')
       .bundle()
-      .shim()
 
     fs.unlinkSync(file);
     fs.unlinkSync(entryFile);

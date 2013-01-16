@@ -11,7 +11,6 @@ test('when I shim a module that declares its export as a var on the root level i
     .use(shim({ alias: 'rootvar', path: './fixtures/shims/root-level-var.js', exports: 'nineties' }))
     .addEntry(__dirname + '/fixtures/entry-requires-root-level-var.js')
     .bundle()
-    .shim()
 
   var ctx = { window: {}, console: console };
   vm.runInNewContext(src, ctx);
@@ -30,7 +29,6 @@ test('when I shim a module that declares its export as a var on the root level i
     .use(shim({ alias: 'rootvar', path: './fixtures/shims/root-level-var.js', exports: 'nineties' }))
     .addEntry(__dirname + '/fixtures/entry-requires-root-level-var.js')
     .bundle()
-    .shim()
 
   var ctx = { window: {}, console: console };
   vm.runInNewContext(src, ctx);

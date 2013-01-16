@@ -5,20 +5,9 @@ var path              =  require('path')
   , format            =  require('util').format
   , getInjectPosition =  require('./lib/get-injectposition')
   , buildScriptDir    =  path.dirname(module.parent.filename)
-  , registeredShims   =  {}
   ;
 
 module.exports = shim;
-
-shim.__defineGetter__(
-    'registeredAliases'
-  , function () { return Object.keys(registeredShims); }
-);
-
-shim.registeredShim = function (alias) { return registeredShims[alias]; };
-
-// bad, bad, bad, but results in so much nicer API and since this will only run as part of the browserify bundle script it's ok, right?
-String.prototype.shim = function () { return injectShimsInto(this); };
 
 function validate(config) {
   if (!config) 
@@ -50,18 +39,6 @@ function shim(config) {
 
   return function (bundle) {
     var wrapped = bundle.wrap(config.alias, bindWindow(exported));
-    bundle.ignore(config.alias); 
-    registeredShims[config.alias] = wrapped;
+    bundle.include(config.path, config.alias, bindWindow(exported));
   };
-}
-
-function injectShimsInto(src) {
-  if (!shim.registeredAliases.length) throw new Error('unable to shims the bundle because no shims were registered via: bundle.use(shim(..))');
-
-  var position = getInjectPosition(src);
-  if (position < 0) throw new Error('unable to shim the given bundle because shim inject position could not be found');
-
-  var wrappers = Object.keys(registeredShims).map(function (k) { return registeredShims[k]; });
-
-  return [ src.slice(0, position), wrappers.join('\n') + '\n', src.slice(position) ].join('');
 }
