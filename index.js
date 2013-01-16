@@ -35,10 +35,10 @@ function shim(config) {
     , content = fs.readFileSync(resolvedPath, 'utf-8')
     , exported = config.exports
         ? content + moduleExport(config.exports)
-        : content;
+        : content
+    , boundWindow = bindWindow(exported);
 
   return function (bundle) {
-    var wrapped = bundle.wrap(config.alias, bindWindow(exported));
-    bundle.include(config.path, config.alias, bindWindow(exported));
+    bundle.include(config.path, config.alias, boundWindow);
   };
 }
