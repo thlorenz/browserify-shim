@@ -15,6 +15,8 @@ shim.__defineGetter__(
   , function () { return Object.keys(registeredShims); }
 );
 
+shim.registeredShim = function (alias) { return registeredShims[alias]; };
+
 // bad, bad, bad, but results in so much nicer API and since this will only run as part of the browserify bundle script it's ok, right?
 String.prototype.shim = function () { return injectShimsInto(this); };
 
