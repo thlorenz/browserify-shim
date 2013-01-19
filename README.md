@@ -21,7 +21,7 @@ var bundled = browserify({ debug: true })
 fs.writeFileSync(builtFile, bundled);
 ```
 
-## Install
+## Installation
 
     npm install browserify-shim
 
@@ -32,6 +32,50 @@ fs.writeFileSync(builtFile, bundled);
 - handles even those modules out there that just declare a `var foo = ...` on the script level and assume it gets attached to the
   `window` object since the only way they will ever be run is in the global context - "ahem, ... NO?!"
 - loads commonJS modules that are not residing in your `node_modules` from a specific path
+- includes `depends` to support shimming libraries that depend on other libraries to be in the global namespace
+
+## Dependents
+
+Some libraries depend on other libraries to have attached their exports to the window.
+
+As an example [backbone.stickit](http://nytimes.github.com/backbone.stickit/) depends on Backbone, underscore.js,
+and jQuery or Zepto.
+
+We would properly declare its dependents when shimming it as follows:
+```js
+
+var jquery     =  { alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }
+  , underscore =  { alias: 'underscore', path: './js/vendor/underscore.js', exports: null }
+  , backbone   =  { alias: 'backbone', path: './js/vendor/backbone.js', exports: null }
+  ;
+
+var bundled = browserify()
+  .use(shim(jquery))
+  .use(shim(underscore))
+  .use(shim(backbone))
+  .use(shim({ 
+      alias: 'backbone.stickit'
+    , path: './js/vendor/backbone.stickit.js
+    , exports: null
+    , depends: [ jquery, underscore, backbone ]  
+    })
+  )
+  .addEntry('./js/entry.js')
+  .bundle();
+```
+
+**Note:** the order of shim declarations doesn't matter, i.e. we could have shimmed `backbone.stickit` at the very top
+(before the libraries it depends on).
+
+If a shim depends on only one other shim you don't can pass that directly, e.g.: 
+
+```js
+var underscore =  { alias: 'underscore', path: './js/vendor/underscore.js', exports: null }
+
+[..]
+  .use(shim({ alias: 'backbone', path: './js/vendor/backbone.js', exports: null, depends: underscore })
+[..]
+```
 
 ## Examples
 
