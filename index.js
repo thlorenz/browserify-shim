@@ -20,12 +20,37 @@ function validate(config) {
     throw new Error('browserify-shim needs at least an exports, a path and an exports to do its job, you are missing the exports.');
 }
 
-function bindWindow(s) {
-  return '(function browserifyShim() {\n' + s + '\n}).call(global);\n';
+function validateDepends(depends) {
+  depends.forEach(function (dep) {
+    if (!dep.alias)
+        throw new Error('when a dependency is declared, an alias property needs to be included, [' + dep + '] is missing one');
+    if (!dep.exports)
+        throw new Error('when a dependency is declared, an exports property needs to be included, [' + dep + '] is missing one');
+  });
+}
+
+function requireDependencies(depends) {
+  if (!depends) return '';
+  depends = Array.isArray(depends) ? depends : [ depends ];
+  validateDepends(depends);
+
+  return depends.reduce(
+      function (acc, dep) {
+        return acc + 'global.' + dep.exports + ' = require("' + dep.alias + '");\n';
+      }
+    , '\n; '
+  );
+}
+
+function bindWindow(s, dependencies) {
+  return '(function browserifyShim() {\n'
+      + dependencies 
+      + s
+      + '\n}).call(global);\n';
 }
 
 function moduleExport(exp) {
-  return format(';\nmodule.exports = typeof %s != "undefined" ? %s : window.%s;\n', exp, exp, exp);
+  return format('\n; module.exports = typeof %s != "undefined" ? %s : window.%s;\n', exp, exp, exp);
 }
 
 function shim(config) {
@@ -36,7 +61,8 @@ function shim(config) {
     , exported = config.exports
         ? content + moduleExport(config.exports)
         : content
-    , boundWindow = bindWindow(exported);
+    , dependencies = requireDependencies(config.depends)
+    , boundWindow = bindWindow(exported, dependencies);
 
   return function (bundle) {
     bundle.include(config.path, config.alias, boundWindow);
