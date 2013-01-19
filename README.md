@@ -44,10 +44,9 @@ and jQuery or Zepto.
 We would properly declare its dependents when shimming it as follows:
 ```js
 
-var jquery     =  { alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }
-  , underscore =  { alias: 'underscore', path: './js/vendor/underscore.js', exports: null }
-  , backbone   =  { alias: 'backbone', path: './js/vendor/backbone.js', exports: null }
-  ;
+var jquery     =  { alias: 'jquery'     ,  path: './js/vendor/jquery.js'     ,  exports: '$' }
+  , underscore =  { alias: 'underscore' ,  path: './js/vendor/underscore.js' ,  exports: null }
+  , backbone   =  { alias: 'backbone'   ,  path: './js/vendor/backbone.js'   ,  exports: null };
 
 var bundled = browserify()
   .use(shim(jquery))
@@ -55,7 +54,7 @@ var bundled = browserify()
   .use(shim(backbone))
   .use(shim({ 
       alias: 'backbone.stickit'
-    , path: './js/vendor/backbone.stickit.js
+    , path: './js/vendor/backbone.stickit.js'
     , exports: null
     , depends: [ jquery, underscore, backbone ]  
     })
@@ -67,7 +66,7 @@ var bundled = browserify()
 **Note:** the order of shim declarations doesn't matter, i.e. we could have shimmed `backbone.stickit` at the very top
 (before the libraries it depends on).
 
-If a shim depends on only one other shim you don't can pass that directly, e.g.: 
+If a shim depends on only one other shim you can pass just that (instead of an `Array`), e.g.: 
 
 ```js
 var underscore =  { alias: 'underscore', path: './js/vendor/underscore.js', exports: null }
