@@ -3,7 +3,6 @@
 var path              =  require('path')
   , fs                =  require('fs')
   , format            =  require('util').format
-  , getInjectPosition =  require('./lib/get-injectposition')
   , buildScriptDir    =  path.dirname(module.parent.filename)
   ;
 
