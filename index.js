@@ -8,6 +8,10 @@ var path              =  require('path')
 
 module.exports = shim;
 
+function inspect(obj, depth) {
+  return require('util').inspect(obj, false, depth || 5, true);
+}
+
 function validate(config) {
   if (!config) 
     throw new Error('browserify-shim needs at least an alias, a path and an exports to do its job, you are missing the entire config.');
@@ -22,9 +26,7 @@ function validate(config) {
 function validateDepends(depends) {
   depends.forEach(function (dep) {
     if (!dep.alias)
-        throw new Error('when a dependency is declared, an alias property needs to be included, [' + dep + '] is missing one');
-    if (!dep.exports)
-        throw new Error('when a dependency is declared, an exports property needs to be included, [' + dep + '] is missing one');
+        throw new Error('when a dependency is declared, an alias property needs to be included, [' + inspect(dep) + '] is missing one');
   });
 }
 
@@ -35,7 +37,9 @@ function requireDependencies(depends) {
 
   return depends.reduce(
       function (acc, dep) {
-        return acc + 'global.' + dep.exports + ' = require("' + dep.alias + '");\n';
+        return dep.exports 
+          ? acc + 'global.' + dep.exports + ' = require("' + dep.alias + '");\n'
+          : acc + 'require("' + dep.alias + '");\n';
       }
     , '\n; '
   );
