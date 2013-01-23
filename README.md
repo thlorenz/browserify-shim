@@ -59,7 +59,8 @@ var bundled = browserify()
       alias: 'backbone.stickit'
     , path: './js/vendor/backbone.stickit.js'
     , exports: null
-      // here we are declaring the dependencies and under what name/symbol they are expected to be attached to the window
+      // Below we are declaring the dependencies and under what name/symbol 
+      // they are expected to be attached to the window.
     , depends: { jquery: '$', underscore: '_', backbone: 'Backbone' }  
     })
   )
