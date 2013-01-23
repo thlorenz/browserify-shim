@@ -45,15 +45,28 @@ function requireDependencies(depends) {
   );
 }
 
-function bindWindow(s, dependencies) {
-  return '(function browserifyShim() {\n'
+function bindWindowWithExports(s, dependencies) {
+  // purposely make module and define be 'undefined',
+  // but pass a function that allows exporting our dependency from the window or the context
+  
+  return '(function browserifyShim(module, define, browserify_shim__define__module__export__) {\n'
       + dependencies 
       + s
-      + '\n}).call(global);\n';
+      + '\n}).call(global, undefined, undefined, function defineExport(ex) { module.exports = ex; });\n';
+}
+
+function bindWindowWithoutExports(s, dependencies) {
+  // if a module doesn't need anything to be exported, it is likely, that it exports itself properly
+  // therefore it is not a good idea to override the module here
+
+  return '(function browserifyShim(module, define) {\n'
+      + dependencies 
+      + s
+      + '\n}).call(global, module, undefined);\n';
 }
 
 function moduleExport(exp) {
-  return format('\n; module.exports = typeof %s != "undefined" ? %s : window.%s;\n', exp, exp, exp);
+  return format('\n; browserify_shim__define__module__export__(typeof %s != "undefined" ? %s : window.%s);\n', exp, exp, exp);
 }
 
 function shim(config) {
@@ -65,7 +78,9 @@ function shim(config) {
         ? content + moduleExport(config.exports)
         : content
     , dependencies = requireDependencies(config.depends)
-    , boundWindow = bindWindow(exported, dependencies);
+    , boundWindow = config.exports
+        ? bindWindowWithExports(exported, dependencies)
+        : bindWindowWithoutExports(exported, dependencies);
 
   return function (bundle) {
     bundle.include(config.path, config.alias, boundWindow);
