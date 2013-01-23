@@ -49,7 +49,7 @@ and jQuery or Zepto.
 
 We would properly declare its dependents when shimming it as follows. 
 
-Please note that we are defining exports for `underscore` and `backbone` although both are commonJS compatible.
+**Please note** that we are **defining exports** for `underscore` and `backbone` **although both are commonJS compatible**.
 We need to do this in order to make sure that they get attached to the window as well as being exported.
 For more info see Features: "making define and module be undefined"
 
