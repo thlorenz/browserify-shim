@@ -11,13 +11,13 @@ var dependent = {
     alias: 'dependent'
   , path: './fixtures/shims/lib-depending-on-global-jquery'
   , exports: 'dep' 
-  , depends: { 'jquery': '$' }
+  , depends: { jquery: '$' }
 };
 var multidependent = { 
     alias: 'multidependent'
   , path: './fixtures/shims/lib-depending-on-global-jquery-and-_'
   , exports: 'dep' 
-  , depends: { 'jquery': '$', 'underscore': '_' }
+  , depends: { jquery: '$', underscore: '_' }
 };
 
 test('\nwhen I shim "jquery" in debug mode and shim a lib that depends on it', function (t) {
