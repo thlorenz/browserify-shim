@@ -47,17 +47,17 @@ Some libraries depend on other libraries to have attached their exports to the w
 As an example [backbone.stickit](http://nytimes.github.com/backbone.stickit/) depends on Backbone, underscore.js,
 and jQuery or Zepto.
 
-We would properly declare its dependents when shimming it as follows:
+We would properly declare its dependents when shimming it as follows. 
+
+Please note that we are defining exports for `underscore` and `backbone` although both are commonJS compatible.
+We need to do this in order to make sure that they get attached to the window as well as being exported.
+For more info see Features: "making define and module be undefined"
+
 ```js
 var bundled = browserify()
-  .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }))
-
-  // Defining exports here although both below libs are commonJS compatible. 
-  // We need to do this in order to make sure that they get attached to the window as well as being exported.
-  // For more info see Features: "making define and module be undefined"
-
-  .use(shim({ alias: 'underscore', path: './js/vendor/underscore.js', exports: '_' }))
-  .use(shim({ alias: 'backbone', path: './js/vendor/backbone.js',  exports: 'Backbone' }))
+  .use(shim({ alias: 'jquery'     ,  path: './js/vendor/jquery.js'     ,  exports: '$' }))
+  .use(shim({ alias: 'underscore' ,  path: './js/vendor/underscore.js' ,  exports: '_' }))
+  .use(shim({ alias: 'backbone'   ,  path: './js/vendor/backbone.js'   ,  exports: 'Backbone' }))
   .use(shim({
       alias: 'backbone.stickit'
     , path: './js/vendor/backbone.stickit.js'
