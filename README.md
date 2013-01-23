@@ -33,6 +33,10 @@ fs.writeFileSync(builtFile, bundled);
   `window` object since the only way they will ever be run is in the global context - "ahem, ... NO?!"
 - loads commonJS modules that are not residing in your `node_modules` from a specific path
 - includes `depends` to support shimming libraries that depend on other libraries to be in the global namespace
+- makes `define` and **if an export is specified** alse `module` be `undefined` in order to prevent improper authored
+  libs from attaching their export to the `window` because they think they are being required. This can cause problems,
+  e.g., when libraries are improperly concated like
+  [here](https://github.com/mhemesath/r2d3/blob/918bd076e4f980722438b2594d1eba53a522ce75/r2d3.v2.js#L222)
 
 ## Dependents
 
