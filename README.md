@@ -49,20 +49,20 @@ and jQuery or Zepto.
 
 We would properly declare its dependents when shimming it as follows:
 ```js
-
-var jquery     =  { alias: 'jquery'     ,  path: './js/vendor/jquery.js'     ,  exports: '$' }
-  , underscore =  { alias: 'underscore' ,  path: './js/vendor/underscore.js' ,  exports: null }
-  , backbone   =  { alias: 'backbone'   ,  path: './js/vendor/backbone.js'   ,  exports: null };
-
 var bundled = browserify()
-  .use(shim(jquery))
-  .use(shim(underscore))
-  .use(shim(backbone))
-  .use(shim({ 
+  .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }))
+
+  // Defining exports here although both below libs are commonJS compatible. 
+  // We need to do this in order to make sure that they get attached to the window as well as being exported.
+  // For more info see Features: "making define and module be undefined"
+
+  .use(shim({ alias: 'underscore', path: './js/vendor/underscore.js', exports: '_' }))
+  .use(shim({ alias: 'backbone', path: './js/vendor/backbone.js',  exports: 'Backbone' }))
+  .use(shim({
       alias: 'backbone.stickit'
     , path: './js/vendor/backbone.stickit.js'
     , exports: null
-    , depends: [ jquery, underscore, backbone ]  
+    , depends: { jquery: '$', underscore: '_', backbone: 'Backbone' }  
     })
   )
   .addEntry('./js/entry.js')
