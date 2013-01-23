@@ -1,2 +1,2 @@
 var _ = function () { return 'super underscore' }
-window._ = _;
+module.exports = _;

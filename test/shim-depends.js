@@ -6,7 +6,7 @@ var browserify = require('browserify')
   , shim = require('..')
 
 var jquery = { alias: 'jquery', path: './fixtures/shims/crippled-jquery', exports: '$' };
-var under = { alias: 'underscore', path: './fixtures/shims/lib-attaching-_', exports: '_' };
+var under = { alias: 'underscore', path: './fixtures/shims/lib-exporting-_', exports: null };
 var dependent = { 
     alias: 'dependent'
   , path: './fixtures/shims/lib-depending-on-global-jquery'
