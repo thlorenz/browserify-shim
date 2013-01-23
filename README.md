@@ -36,7 +36,9 @@ fs.writeFileSync(builtFile, bundled);
 - makes `define` and **if an export is specified** also `module` be `undefined` in order to prevent improper authored
   libs from attaching their export to the `window` because they think they are being required via `commonJS`. This can cause problems,
   e.g., when libraries are improperly concatenated like
-  [here](https://github.com/mhemesath/r2d3/blob/918bd076e4f980722438b2594d1eba53a522ce75/r2d3.v2.js#L222)
+  [here](https://github.com/mhemesath/r2d3/blob/918bd076e4f980722438b2594d1eba53a522ce75/r2d3.v2.js#L222). For more info
+  read comment inside [this
+  fixture](https://github.com/thlorenz/browserify-shim/blob/master/test/fixtures/shims/lib-with-exports-define-global-problem.js)
 
 ## Dependents
 
