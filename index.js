@@ -23,19 +23,14 @@ function validate(config) {
     throw new Error('browserify-shim needs at least an exports, a path and an exports to do its job, you are missing the exports.');
 }
 
-function validateDepends(depends) {
-  depends.forEach(function (dep) {
-    if (!dep.alias)
-        throw new Error('when a dependency is declared, an alias property needs to be included, [' + inspect(dep) + '] is missing one');
-  });
-}
-
 function requireDependencies(depends) {
   if (!depends) return '';
-  depends = Array.isArray(depends) ? depends : [ depends ];
-  validateDepends(depends);
+  //validateDepends(depends);
 
-  return depends.reduce(
+  return Object.keys(depends)
+    .map(function (k) { return { alias: k, exports: depends[k] || null }; })
+    //.forEach(function (x) { console.log(x); })
+    .reduce(
       function (acc, dep) {
         return dep.exports 
           ? acc + 'global.' + dep.exports + ' = require("' + dep.alias + '");\n'

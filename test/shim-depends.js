@@ -6,18 +6,18 @@ var browserify = require('browserify')
   , shim = require('..')
 
 var jquery = { alias: 'jquery', path: './fixtures/shims/crippled-jquery', exports: '$' };
-var under = { alias: 'under', path: './fixtures/shims/lib-attaching-_', exports: '_' };
+var under = { alias: 'underscore', path: './fixtures/shims/lib-attaching-_', exports: '_' };
 var dependent = { 
     alias: 'dependent'
   , path: './fixtures/shims/lib-depending-on-global-jquery'
   , exports: 'dep' 
-  , depends: jquery
+  , depends: { 'jquery': '$' }
 };
 var multidependent = { 
     alias: 'multidependent'
   , path: './fixtures/shims/lib-depending-on-global-jquery-and-_'
   , exports: 'dep' 
-  , depends: [ jquery, under ]
+  , depends: { 'jquery': '$', 'underscore': '_' }
 };
 
 test('\nwhen I shim "jquery" in debug mode and shim a lib that depends on it', function (t) {
