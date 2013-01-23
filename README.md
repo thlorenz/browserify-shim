@@ -42,15 +42,18 @@ fs.writeFileSync(builtFile, bundled);
 
 ## Dependents
 
-Some libraries depend on other libraries to have attached their exports to the window.
+Some libraries depend on other libraries to have attached their exports to the window for historical reasons :(.
+(hopefully soon we can truly say that this bad design is history)
 
 As an example [backbone.stickit](http://nytimes.github.com/backbone.stickit/) depends on Backbone, underscore.js,
 and jQuery or Zepto.
 
-We would properly declare its dependents when shimming it as follows. 
+We would properly declare its dependents when shimming it as follows:
 
 **Please note** that we are **defining exports** for `underscore` and `backbone` **although both are commonJS compatible**.
-We need to do this in order to make sure that they get attached to the window as well as being exported.
+We need to do this in order to make sure that they get attached to the `window` as well as being exported since
+`backbone.stickit` expects them to be globally defined.
+
 For more info see Features: "making define and module be undefined"
 
 ```js
