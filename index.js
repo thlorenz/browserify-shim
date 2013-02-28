@@ -89,7 +89,7 @@ module.exports = function shim(browserifyInstance, configs) {
       var resolvedPath = require.resolve(path.resolve(buildScriptDir, config.path));
 
       shims[resolvedPath] = config;
-      browserifyInstance.add(resolvedPath, { expose: alias });
+      browserifyInstance.require(resolvedPath, { expose: alias });
     });
 
   browserifyInstance.transform(function (file) {
