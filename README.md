@@ -3,6 +3,8 @@
 Shims modules that aren't installed as `npm` modules so they can be browserified even if they aren't commonJS
 compatible.
 
+**NOTE:** Only works with versions 1.x of browserify currently, but a version that supports 2.x will be forthcoming as soon as that is possible
+(i.e. when browserify supports plugins).
 ```js
 var browserify = require('browserify')
   , shim = require('browserify-shim');
@@ -70,16 +72,6 @@ var bundled = browserify()
 
 **Note:** the order of shim declarations doesn't matter, i.e. we could have shimmed `backbone.stickit` at the very top
 (before the libraries it depends on).
-
-If a shim depends on only one other shim you can pass just that (instead of an `Array`), e.g.: 
-
-```js
-var underscore =  { alias: 'underscore', path: './js/vendor/underscore.js', exports: null }
-
-[..]
-  .use(shim({ alias: 'backbone', path: './js/vendor/backbone.js', exports: null, depends: underscore })
-[..]
-```
 
 ## Examples
 
