@@ -22,6 +22,9 @@ var
     jquery: "1.8.3",
   };
 
+// help with testing
+window.require = require;
+
 // Expose jQuery to the global object
 window.jQuery = window.$ = jQuery;
 

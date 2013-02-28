@@ -1,35 +1,35 @@
 'use strict';
 
-var path              =  require('path')
-  , fs                =  require('fs')
-  , format            =  require('util').format
+var path    =  require('path')
+  , fs      =  require('fs')
+  , format  =  require('util').format
+  , through =  require('through')
   , buildScriptDir    =  path.dirname(module.parent.filename)
   ;
-
-module.exports = shim;
 
 function inspect(obj, depth) {
   return require('util').inspect(obj, false, depth || 5, true);
 }
 
+function preValidate(browserifyInstance, configs) {
+  if (!browserifyInstance || typeof browserifyInstance.add !== 'function' || typeof browserifyInstance.transform !== 'function')
+    throw new Error('browserify-shim needs to be passed a proper browserify instance as the first argument.');
+  if (!configs || typeof configs !== 'object') 
+    throw new Error('browserify-shim needs to be passed a hashmap of one or more shim configs as the second argument.');
+}
+
 function validate(config) {
-  if (!config) 
-    throw new Error('browserify-shim needs at least an alias, a path and an exports to do its job, you are missing the entire config.');
-  if (!config.hasOwnProperty('alias'))
-    throw new Error('browserify-shim needs at least an alias, a path and an exports to do its job, you are missing the alias.');
   if (!config.hasOwnProperty('path'))
-    throw new Error('browserify-shim needs at least an path, a path and an exports to do its job, you are missing the path.');
+    throw new Error('browserify-shim needs at least a path and exports to do its job, you are missing the path.');
   if (!config.hasOwnProperty('exports'))
-    throw new Error('browserify-shim needs at least an exports, a path and an exports to do its job, you are missing the exports.');
+    throw new Error('browserify-shim needs at least a path and exports to do its job, you are missing the exports.');
 }
 
 function requireDependencies(depends) {
   if (!depends) return '';
-  //validateDepends(depends);
 
   return Object.keys(depends)
     .map(function (k) { return { alias: k, exports: depends[k] || null }; })
-    //.forEach(function (x) { console.log(x); })
     .reduce(
       function (acc, dep) {
         return dep.exports 
@@ -64,20 +64,47 @@ function moduleExport(exp) {
   return format('\n; browserify_shim__define__module__export__(typeof %s != "undefined" ? %s : window.%s);\n', exp, exp, exp);
 }
 
-function shim(config) {
-  validate(config);
+function wrap(content, config) {
+  var exported = config.exports
+      ? content + moduleExport(config.exports)
+      : content
+  , dependencies = requireDependencies(config.depends)
+  , boundWindow = config.exports
+      ? bindWindowWithExports(exported, dependencies)
+      : bindWindowWithoutExports(exported, dependencies);
 
-  var resolvedPath = require.resolve(path.resolve(buildScriptDir, config.path))
-    , content = fs.readFileSync(resolvedPath, 'utf-8')
-    , exported = config.exports
-        ? content + moduleExport(config.exports)
-        : content
-    , dependencies = requireDependencies(config.depends)
-    , boundWindow = config.exports
-        ? bindWindowWithExports(exported, dependencies)
-        : bindWindowWithoutExports(exported, dependencies);
-
-  return function (bundle) {
-    bundle.include(config.path, config.alias, boundWindow);
-  };
+  return boundWindow;
 }
+
+module.exports = function shim(browserifyInstance, configs) {
+  var shims = {};
+  preValidate(browserifyInstance, configs);
+
+  Object.keys(configs)
+    .forEach(function (alias) {
+      var config = configs[alias];
+
+      validate(config);
+
+      var resolvedPath = require.resolve(path.resolve(buildScriptDir, config.path));
+
+      shims[resolvedPath] = config;
+      browserifyInstance.add(resolvedPath, { expose: alias });
+    });
+
+  browserifyInstance.transform(function (file) {
+      var content = '';
+      return through(
+          function write(buf) {
+            content += buf;
+          }
+        , function end() {
+            var config = shims[file] 
+              , transformed = config ? wrap(content, config) : content;
+
+            this.queue(transformed);
+            this.queue(null);
+          }
+      );
+  });
+};
