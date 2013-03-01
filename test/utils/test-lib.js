@@ -51,8 +51,9 @@ module.exports = function testLib(t, opts) {
 //      fs.writeFileSync(__dirname + '/../build/bundle-zepto.js', src, 'utf-8')
       if (err) { t.fail(err); return t.end() } 
 
-      var ctx = jsdom(html).createWindow();
-      var require_ = require('vm').runInNewContext(src, ctx);
+      var sandbox = jsdom(html).createWindow();
+      console.log(sandbox.window)
+      var require_ = require('vm').runInNewContext(src, sandbox);
 
       runTest(t, require_('entry'));
     });
