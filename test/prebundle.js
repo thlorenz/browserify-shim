@@ -4,22 +4,40 @@ var browserify = require('browserify')
   , test = require('tap').test
   , shim = require('..')
 
-test('\n# when I shim "jquery" in debug mode', function (t) {
+test('\n# when I shim "jquery"', function (t) {
   
-  var prebundle = browserify({ debug: true })
-    .use(shim({ alias: 'jquery', path: './fixtures/shims/crippled-jquery', exports: '$' }))
-    .use(shim({ alias: 'jquery', path: './fixtures/shims/crippled-jquery', exports: '$' }))
+  var entryPath = './fixtures/entry-requires-jquery.js'
+    , entryFullPath = require.resolve(entryPath)
+    , jqueryPath = './fixtures/shims/crippled-jquery'
+    , jqueryFullPath = require.resolve(jqueryPath)
 
-    .addEntry(__dirname + '/fixtures/entry-requires-jquery.js')
-  var bundle = prebundle.bundle()
+  var prebundle = browserify()
 
-  var jqueryFile = prebundle.files['./fixtures/shims/crippled-jquery'];
+  shim(prebundle, { 
+    jquery: { path: jqueryPath, exports: '$' }
+  })
 
-  t.ok(jqueryFile, 'the prebundle includes jquery file under the given path')
-  t.equals(jqueryFile.target, 'jquery', 'its target is the alias jquery')
-  t.ok(jqueryFile.body.length, 'includes its code in the body')
-  t.ok(/require\.define\(.jquery/.test(bundle), 'final bundle includes defined jquery')
-  t.ok(/\/\/@ sourceURL=jquery/.test(bundle), 'points its sourceURL to jquery')
+  prebundle.require(entryFullPath, { expose: 'entry' })
+  
+  t.equal(prebundle._pending, 2, 'before bundling: has two pending')
+  t.equal(Object.keys(prebundle.exports).length, 0, 'before bundling: has no exports')
+  t.equal(Object.keys(prebundle._mapped).length, 0, 'before bundling: has no mappings')
+  t.equal(prebundle.files.length, 0, 'before bundling: has no files')
 
-  t.end()
+  prebundle.bundle(function (err, src) {
+
+    t.equal(Object.keys(prebundle.exports).length, 2, 'after bundling: has two exports')
+    t.ok(prebundle.exports[jqueryFullPath], 'after bundling: exports jquery under its fullPath')
+    t.ok(prebundle.exports[entryFullPath], 'after bundling: exports entry under its fullPath')
+
+    t.equal(prebundle.files.length, 2, 'after bundling: has two files')
+    t.equal(prebundle._expose[jqueryFullPath], 'jquery', 'after bundling: exposes jquery with name "jquery" under its full path')
+    t.equal(prebundle._expose[entryFullPath], 'entry', 'after bundling: exposes entry with name "entry" under its full path')
+
+    t.equal(Object.keys(prebundle._mapped).length, 2, 'after bundling: has two mappings')
+    t.equal(prebundle._mapped['jquery'], jqueryFullPath, 'after bundling: maps "jquery" to its full path')
+    t.equal(prebundle._mapped['entry'], entryFullPath, 'after bundling: maps "entry" to its full path')
+
+    t.end() 
+  })
 });
