@@ -7,24 +7,17 @@ var browserify = require('browserify')
 
 test('when I shim a commonJS module in order to alias it without installing it as a node_module', function (t) {
   
-  function getSrc(debug) {
-    return browserify({ debug: debug })
-      .use(shim({ alias: 'cjs', path: './fixtures/shims/commonjs-module', exports: null }))
-      .addEntry(__dirname + '/fixtures/entry-requires-cjs.js')
-      .bundle()
-  }
+  t.test('when bundled', function (t) {
+    var b = browserify()
+    shim(b, { cjs: { path: './fixtures/shims/commonjs-module', exports: null } })
 
-  t.test('when bundled in debug mode', function (t) {
-    var ctx = { window: {} };
-    vm.runInNewContext(getSrc(true), ctx);
-    t.equal(ctx.window.require('/entry-requires-cjs'), 'super duper export', 'requires cjs properly from the given path');
-    t.end()
+    b.require(__dirname + '/fixtures/entry-requires-cjs.js', { expose: 'entry-requires-cjs' })
+    b.bundle(function (err, src) {
+      if (err) { return t.fail(err) } 
+      var ctx = { window: {} };
+      var require_ = vm.runInNewContext(src, ctx);
+      t.equal(require_('entry-requires-cjs'), 'super duper export', 'requires cjs properly from the given path');
+      t.end()
+    })
   })
-
-  t.test('when bundled in non debug mode', function (t) {
-    var ctx = { window: {} };
-    vm.runInNewContext(getSrc(false), ctx);
-    t.equal(ctx.window.require('/entry-requires-cjs'), 'super duper export', 'requires cjs properly from the given path');
-    t.end()
-  })
-});
+})

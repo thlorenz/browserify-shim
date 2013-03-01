@@ -107,4 +107,6 @@ module.exports = function shim(browserifyInstance, configs) {
           }
       );
   });
+  
+  return browserifyInstance;
 };
