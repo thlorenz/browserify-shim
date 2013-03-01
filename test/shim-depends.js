@@ -5,85 +5,56 @@ var browserify = require('browserify')
   , vm = require('vm')
   , shim = require('..')
 
-var jquery = { alias: 'jquery', path: './fixtures/shims/crippled-jquery', exports: '$' };
-var under = { alias: 'underscore', path: './fixtures/shims/lib-exporting-_', exports: null };
+var jquery = { path: './fixtures/shims/crippled-jquery', exports: '$' };
+var underscore = { path: './fixtures/shims/lib-exporting-_', exports: null };
 var dependent = { 
-    alias: 'dependent'
-  , path: './fixtures/shims/lib-depending-on-global-jquery'
+    path: './fixtures/shims/lib-depending-on-global-jquery'
   , exports: 'dep' 
   , depends: { jquery: '$' }
 };
 var multidependent = { 
-    alias: 'multidependent'
-  , path: './fixtures/shims/lib-depending-on-global-jquery-and-_'
+    path: './fixtures/shims/lib-depending-on-global-jquery-and-_'
   , exports: 'dep' 
   , depends: { jquery: '$', underscore: '_' }
 };
 
-test('\nwhen I shim "jquery" in debug mode and shim a lib that depends on it', function (t) {
+test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
   
-  var src = browserify({ debug: true, exports: 'require' })
-    .use(shim(jquery))
-    .use(shim(dependent))
-    .bundle()
+  shim(browserify(), {
+      jquery    :  jquery
+    , dependent :  dependent
+  })
+  .bundle(function (err, src) {
+    if (err) return t.fail(err)
 
-  src += '\nrequire("dependent")';
+    src += '\nrequire("dependent")';
 
-  var ctx = { window: {}, console: console };
-  vm.runInNewContext(src, ctx);
+    var ctx = { window: {}, console: console };
+    vm.runInNewContext(src, ctx);
 
-  t.equal(ctx.window.dep.jqVersion, '1.8.3', 'when dependent gets required, $ is attached to the window');
-  t.end()
-});
+    t.equal(ctx.window.dep.jqVersion, '1.8.3', 'when dependent gets required, $ is attached to the window');
+    t.end()
+  });
 
-test('\nwhen I shim "jquery" in non debug mode and shim a lib that depends on it', function (t) {
-  
-  var src = browserify({ debug: false, exports: 'require' })
-    .use(shim(jquery))
-    .use(shim(dependent))
-    .bundle()
-
-  src += '\nrequire("dependent")';
-
-  var ctx = { window: {}, console: console };
-  vm.runInNewContext(src, ctx);
-
-  t.equal(ctx.window.dep.jqVersion, '1.8.3', 'when multidependent gets required, $ is attached to the window');
-  t.end()
 });
 
 test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends on both', function (t) {
   
-  var src = browserify({ debug: true, exports: 'require' })
-    .use(shim(jquery))
-    .use(shim(under))
-    .use(shim(multidependent))
-    .bundle()
+  shim(browserify(), {
+      jquery         :  jquery
+    , underscore     :  underscore
+    , multidependent :  multidependent
+  })
+  .bundle(function (err, src) {
+    if (err) return t.fail(err)
 
-  src += '\nrequire("multidependent")';
+    src += '\nrequire("multidependent")';
 
-  var ctx = { window: {}, console: console };
-  vm.runInNewContext(src, ctx);
+    var ctx = { window: {}, console: console };
+    vm.runInNewContext(src, ctx);
 
-  t.equal(ctx.window.dep.jqVersion, '1.8.3', 'when multidependent gets required, $ is attached to the window');
-  t.equal(ctx.window.dep._(), 'super underscore', 'and _ is attached to the window');
-  t.end()
-});
-
-test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends on both, shimming dependent first', function (t) {
-  
-  var src = browserify({ debug: true, exports: 'require' })
-    .use(shim(multidependent))
-    .use(shim(jquery))
-    .use(shim(under))
-    .bundle()
-
-  src += '\nrequire("multidependent")';
-
-  var ctx = { window: {}, console: console };
-  vm.runInNewContext(src, ctx);
-
-  t.equal(ctx.window.dep.jqVersion, '1.8.3', 'when multidependent gets required, $ is attached to the window');
-  t.equal(ctx.window.dep._(), 'super underscore', 'and _ is attached to the window');
-  t.end()
+    t.equal(ctx.window.dep.jqVersion, '1.8.3', 'when multidependent gets required, $ is attached to the window');
+    t.equal(ctx.window.dep._(), 'super underscore', 'and _ is attached to the window');
+    t.end()
+  })
 });
