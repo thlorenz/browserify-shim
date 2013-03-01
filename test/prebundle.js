@@ -16,8 +16,7 @@ test('\n# when I shim "jquery"', function (t) {
   shim(prebundle, { 
     jquery: { path: jqueryPath, exports: '$' }
   })
-
-  prebundle.require(entryFullPath, { expose: 'entry' })
+  .require(entryFullPath, { expose: 'entry' })
   
   t.equal(prebundle._pending, 2, 'before bundling: has two pending')
   t.equal(Object.keys(prebundle.exports).length, 0, 'before bundling: has no exports')
