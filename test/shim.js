@@ -15,10 +15,8 @@ test('when I shim "jquery" to a crippled jquery filerequire it inside the entry 
   b.require(require.resolve('./fixtures/entry-requires-jquery.js'), { expose: 'entry' })
 
   b.bundle({}, function (err, src) {
-    if (err) {
-      t.fail(err)
-      t.end()
-    } 
+    if (err) { t.fail(err); return t.end() } 
+
     var ctx = { window: {}, console: console };
     var require_ = vm.runInNewContext(src, ctx);
 

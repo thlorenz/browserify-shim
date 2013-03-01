@@ -21,10 +21,7 @@ var html =
 
 function generateEntry(alias) {
   // just pass in exported shim in order to ensure it can be required
-  return (
-      // expose require in order to support testing
-        'window.require = require;\n'
-      + 'module.exports = require("' + alias + '");\n')
+  return ('module.exports = require("' + alias + '");\n')
 }
 
 module.exports = function testLib(t, opts) {
@@ -34,23 +31,31 @@ module.exports = function testLib(t, opts) {
     , runTest    =  opts.test
 
   request( baseUrl + name, function(err, resp, body) {
-    var file = path.join(shimsdir, name);
-    shimConfig.path = file;
+    var file = path.join(shimsdir, name)
+      , firstConfigKey = Object.keys(shimConfig)[0]
+      , firstConfig = shimConfig[firstConfigKey]
+
+    firstConfig.path = file;
 
     fs.writeFileSync(file, body);
-    fs.writeFileSync(entryFile, generateEntry(shimConfig.alias));
+    fs.writeFileSync(entryFile, generateEntry(firstConfigKey));
 
-    var src = require('browserify')({ debug: true })
-      .use(shim(shimConfig))
-      .addEntry(__dirname + '/../fixtures/entry-straight-export.js')
-      .bundle()
+    var b = require('browserify')()
+    shim(b, shimConfig)
+    
+    b.require(require.resolve('../fixtures/entry-straight-export.js'), { expose: 'entry' })
+    b.bundle(function (err, src) {
+      fs.unlinkSync(file);
+      fs.unlinkSync(entryFile);
 
-    fs.unlinkSync(file);
-    fs.unlinkSync(entryFile);
+//      fs.writeFileSync(__dirname + '/../build/bundle-zepto.js', src, 'utf-8')
+      if (err) { t.fail(err); return t.end() } 
 
-    var ctx = jsdom(html).createWindow();
-    require('vm').runInNewContext(src, ctx);
+      var ctx = jsdom(html).createWindow();
+      var require_ = require('vm').runInNewContext(src, ctx);
 
-    runTest(t, ctx.window.require('/entry-straight-export'));
+      runTest(t, require_('entry'));
+    });
+
   });
 };
