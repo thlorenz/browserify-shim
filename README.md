@@ -1,31 +1,28 @@
 # browserify-shim [![build status](https://secure.travis-ci.org/thlorenz/browserify-shim.png)](http://travis-ci.org/thlorenz/browserify-shim)
 
-Shims modules that aren't installed as `npm` modules so they can be browserified even if they aren't commonJS
-compatible.
+Shims commonJS incompatible modules so they can be browserified.
 
-**NOTE:** Only works with versions 1.x of browserify currently, but a version that supports 2.x will be forthcoming as soon as that is possible
-(i.e. when browserify supports plugins).
 ```js
 var browserify = require('browserify')
   , shim = require('browserify-shim');
 
-var bundled = browserify({ debug: true })
+shim(browserify(), {
+  // jquery attaches itself to the window as '$' so we assign the exports accordingly
+  jquery:     { path: './js/vendor/jquery.js', exports: '$' }
+})
+.require(require.resolve('./js/entry.js'), { entry: true })
+.bundle(function (err, src) {
+  if (err) return console.error(err);
 
-    // jquery attaches itself to the window as '$' so we assign the exports accordingly
-  .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }))
-
-    // underscore is commonJS compliant, so no further export is needed which we specify by assigning exports 'null'
-  .use(shim({ alias: 'underscore', path: './js/vendor/underscore.js', exports: null }))
-
-  .addEntry('./js/entry.js')
-  .bundle();
-
-fs.writeFileSync(builtFile, bundled);
+  fs.writeFileSync(builtFile, src);
+});
 ```
 
 ## Installation
 
     npm install browserify-shim
+
+For a version compatible with browserify@1.x run `npm install browserify-shim@1.x` instead.
 
 ## Features
 
@@ -53,27 +50,39 @@ and jQuery or Zepto.
 We would properly declare its dependents when shimming it as follows:
 
 ```js
-var bundled = browserify()
-  .use(shim({ alias: 'jquery'     , path: './js/vendor/jquery.js'    ,  exports: '$' }))
-  .use(shim({ alias: 'underscore' , path: './js/vendor/underscore.js',  exports: null }))
-  .use(shim({ alias: 'backbone'   , path: './js/vendor/backbone.js'  ,  exports: null }))
-  .use(shim({
-      alias: 'backbone.stickit'
-    , path: './js/vendor/backbone.stickit.js'
-    , exports: null
-      // Below we are declaring the dependencies and under what name/symbol 
-      // they are expected to be attached to the window.
-    , depends: { jquery: '$', underscore: '_', backbone: 'Backbone' }  
-    })
-  )
-  .addEntry('./js/entry.js')
-  .bundle();
+shim(browserify(), {
+    jquery: { path: './js/vendor/jquery.js',  exports: '$' }
+  , 'backbone.stickit': {
+      , path: './js/vendor/backbone.stickit.js'
+      , exports: null
+        // Below we are declaring the dependencies and under what name/symbol 
+        // they are expected to be attached to the window.
+      , depends: { jquery: '$', underscore: '_', backbone: 'Backbone' }  
+    }
+  })
+
+  // underscore and backbone are commonJS compatible, so a simple require with an expose option works
+  .require(require.resolve('./js/vendor/underscore.js'), { expose: 'underscore' })
+  .require(require.resolve('./js/vendor/backbone.js'), { expose: 'backbone' })
+
+  .require(require.resolve('./js/entry.js'), { entry: true })
+  .bundle(function (err, src) {
+    if (err) return console.error(err);
+
+    fs.writeFileSync(builtFile, src);
+  });
 ```
+
+Given this configuration browserify-shim will attach `$`, `_` and `Backbone` to the window after requiring it, so that
+`backbone.stickit` can find it there.
 
 **Note:** the order of shim declarations doesn't matter, i.e. we could have shimmed `backbone.stickit` at the very top
 (before the libraries it depends on).
 
 ## Examples
+The underscore example is only included for completeness. Since browserify v2.0 commonJS compatible modules don't need shimming anymore
+even if they reside in a folder other than `node_modules`.
 
 - [shim-jquery](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery)
 - [shim-underscore](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-underscore)
+

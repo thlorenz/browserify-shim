@@ -5,12 +5,16 @@ This example demonstrates using a shim fo jquery.
 The main part where it all happens is this snippet:
 
 ```js
-var bundled = browserify({ debug: true })
-  .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }))
-  .addEntry('./js/entry.js')
-  .bundle();
+  shim(browserify(), {
+      jquery: { path: './js/vendor/jquery.js', exports: '$' }
+  })
+  .require(require.resolve('./js/entry.js'), { entry: true })
+  .bundle(function (err, src) {
+    if (err) return console.error(err);
 
-fs.writeFileSync(builtFile, bundled);
+    fs.writeFileSync(builtFile, src);
+    console.log('Build succeeded, open index.html to see the result.');
+  });
 ```
 
 To run this example:
