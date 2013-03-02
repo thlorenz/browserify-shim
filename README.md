@@ -3,8 +3,9 @@
 Shims modules that aren't installed as `npm` modules so they can be browserified even if they aren't commonJS
 compatible.
 
-**NOTE:** Only works with versions 1.x of browserify currently, but a version that supports 2.x will be forthcoming as soon as that is possible
-(i.e. when browserify supports plugins).
+**NOTE:** This version of browserify-shim is compatible with browserify@1.x. For a version compatible with browserify@v2.x see
+[browserify-shim@2.0](https://github.com/thlorenz/browserify-shim/tree/v2.0.0)
+
 ```js
 var browserify = require('browserify')
   , shim = require('browserify-shim');
@@ -25,7 +26,7 @@ fs.writeFileSync(builtFile, bundled);
 
 ## Installation
 
-    npm install browserify-shim
+    npm install browserify-shim@1.x
 
 ## Features
 
