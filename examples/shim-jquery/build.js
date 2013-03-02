@@ -14,7 +14,7 @@ function bundle() {
   shim(browserify(), {
       jquery: { path: './js/vendor/jquery.js', exports: '$' }
   })
-  .add(require.resolve('./js/entry.js'))
+  .add('./js/entry.js')
   .bundle(function (err, src) {
     if (err) return console.error(err);
 
