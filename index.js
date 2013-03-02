@@ -12,8 +12,9 @@ function inspect(obj, depth) {
 }
 
 function preValidate(browserifyInstance, configs) {
-  if (!browserifyInstance || typeof browserifyInstance.add !== 'function' || typeof browserifyInstance.transform !== 'function')
-    throw new Error('browserify-shim needs to be passed a proper browserify instance as the first argument.');
+  if (!browserifyInstance || typeof browserifyInstance.require !== 'function' || typeof browserifyInstance.transform !== 'function')
+    throw new Error('browserify-shim needs to be passed a proper browserify instance as the first argument.\n' +
+                   ' you passed:' + inspect(browserifyInstance));
   if (!configs || typeof configs !== 'object') 
     throw new Error('browserify-shim needs to be passed a hashmap of one or more shim configs as the second argument.');
 }
@@ -78,7 +79,7 @@ function wrap(content, config) {
 
 module.exports = function shim(browserifyInstance, configs) {
   var shims = {};
-  preValidate(browserifyInstance, configs);
+//  preValidate(browserifyInstance, configs);
 
   Object.keys(configs)
     .forEach(function (alias) {

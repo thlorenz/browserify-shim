@@ -11,14 +11,16 @@ function bundle() {
   // This is function is the important part and should be similar to what you would use for your project
   var builtFile = path.join(__dirname, 'js/build/bundle.js');
 
-  var bundled = browserify({ debug: true })
-    .use(shim({ alias: 'jquery', path: './js/vendor/jquery.js', exports: '$' }))
-    .addEntry('./js/entry.js')
-    .bundle();
+  shim(browserify(), {
+      jquery: { path: './js/vendor/jquery.js', exports: '$' }
+  })
+  .add(require.resolve('./js/entry.js'))
+  .bundle(function (err, src) {
+    if (err) return console.error(err);
 
-  fs.writeFileSync(builtFile, bundled);
-
-  console.log('Build succeeded, open index.html to see the result.');
+    fs.writeFileSync(builtFile, src);
+    console.log('Build succeeded, open index.html to see the result.');
+  });
 }
 
 // Normally jquery.js would be in vendor folder already, but I wanted to avoid spreading jquerys all over github ;)
