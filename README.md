@@ -20,7 +20,7 @@ shim(browserify(), {
 
 ## Installation
 
-    npm install browserify-shim
+    npm install browserify-shim@1.x
 
 For a version compatible with browserify@1.x run `npm install browserify-shim@1.x` instead.
 
