@@ -11,7 +11,7 @@ test('when I shim "jquery" to a crippled jquery filerequire it inside the entry 
     jquery: { path: './fixtures/shims/crippled-jquery', exports: '$' } 
   })
   .require(require.resolve('./fixtures/entry-requires-jquery.js'), { expose: 'entry' })
-  .bundle({}, function (err, src) {
+  .bundle(function (err, src) {
     if (err) { t.fail(err); return t.end() } 
 
     var ctx = { window: {}, console: console };
