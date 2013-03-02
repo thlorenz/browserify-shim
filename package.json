@@ -1,6 +1,6 @@
 {
   "name": "browserify-shim",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "Shims any module so it can be browserified even if it isn't commonJS compatible.",
   "main": "index.js",
   "scripts": {
