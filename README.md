@@ -39,7 +39,39 @@ For a version compatible with browserify@1.x run `npm install browserify-shim@1.
   read comment inside [this
   fixture](https://github.com/thlorenz/browserify-shim/blob/master/test/fixtures/shims/lib-with-exports-define-global-problem.js)
 
-## Dependents
+## API
+
+`shim(browserifyInstance, shimconfig)` returns the `browserifyInstance` to allow chaining.
+
+The browserify instance is created via `browserify([opts])`
+
+The shimConfig is a hashmap of modules to be shimmed. Each has the following structure:
+  
+`alias: { path: 'path/to/file.js', exports: 'name' }`
+
+- `alias` the name under which you want to require the module (i.e. `jquery`)
+- `path` relative to your build script or a full path
+- `exports` the name under which the module attaches itself to the window or its execution context (i.e. `$`)
+
+If exports is null, the script will just execute when required, however you don't need browserify-shim for this feature
+anymore. Instead use the `expose` option in your `browserify.require`.
+For more information look at the [shim-underscore example](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-underscore).
+
+### Multi Shim Example
+
+```js
+shim(browserify(), {
+    jquery:     { path: './js/vendor/jquery.js', exports: '$' }
+  , d3:         { path: './js/vendor/d3.js', exports: 'd3' }
+})
+.require(require.resolve('./js/entry.js'), { entry: true })
+.bundle(function (err, src) {
+  [..]
+})
+```
+
+
+### Dependents
 
 Some libraries depend on other libraries to have attached their exports to the window for historical reasons :(.
 (hopefully soon we can truly say that this bad design is history)
