@@ -79,7 +79,7 @@ function wrap(content, config) {
 
 module.exports = function shim(browserifyInstance, configs) {
   var shims = {};
-//  preValidate(browserifyInstance, configs);
+  preValidate(browserifyInstance, configs);
 
   Object.keys(configs)
     .forEach(function (alias) {
