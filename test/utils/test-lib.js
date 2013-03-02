@@ -1,13 +1,14 @@
 'use strict';
 /*jshint asi: true*/
 
-var request = require('request')
-  , fs      = require('fs')
-  , path = require('path')
-  , shim = require('../..')
-  , jsdom = require('jsdom').jsdom
-  , shimsdir = path.join(__dirname, '..', 'fixtures', 'shims')
-  , entryFile = path.join(__dirname, '..', 'fixtures', 'entry-straight-export.js')
+var request =  require('request')
+  , fs      =  require('fs')
+  , vm      =  require('vm')
+  , path    =  require('path')
+  , shim    =  require('../..')
+  , jsdom   =  require('jsdom').jsdom
+  , shimsdir  =  path.join(__dirname, '..', 'fixtures', 'shims')
+  , entryFile =  path.join(__dirname, '..', 'fixtures', 'entry-straight-export.js')
 
 var html = 
     '<!DOCTYPE html>'
@@ -24,6 +25,11 @@ function generateEntry(alias) {
   return ('module.exports = require("' + alias + '");\n')
 }
 
+require('tap').on('end', function () {
+//  fs.unlinkSync(file);
+  fs.unlinkSync(entryFile);
+})
+
 module.exports = function testLib(t, opts) {
   var baseUrl    =  opts.baseUrl
     , name       =  opts.name
@@ -37,25 +43,24 @@ module.exports = function testLib(t, opts) {
 
     firstConfig.path = file;
 
-    fs.writeFileSync(file, body);
-    fs.writeFileSync(entryFile, generateEntry(firstConfigKey));
+    fs.writeFileSync(file, body, 'utf-8');
+    fs.writeFileSync(entryFile, generateEntry(firstConfigKey), 'utf-8');
 
-    var b = require('browserify')()
-    shim(b, shimConfig)
-    
-    b.require(require.resolve('../fixtures/entry-straight-export.js'), { expose: 'entry' })
-    b.bundle(function (err, src) {
-      fs.unlinkSync(file);
-      fs.unlinkSync(entryFile);
+    shim(require('browserify')(), shimConfig)
+      .require(require.resolve(entryFile), { expose: 'entry' })
+      .bundle(function (err, src) {
 
-//      fs.writeFileSync(__dirname + '/../build/bundle-zepto.js', src, 'utf-8')
-      if (err) { t.fail(err); return t.end() } 
+        fs.unlinkSync(file);
 
-      var sandbox = jsdom(html).createWindow();
-      var require_ = require('vm').runInNewContext(src, sandbox);
+        if (err) { t.fail(err); return t.end() } 
 
-      runTest(t, require_('entry'));
-    });
+        var window = jsdom(html).createWindow()
+          , context = vm.createContext(window)
 
+        Object.keys(window).forEach(function (k) { context[k] = window[k] })
+        var require_ = vm.runInContext(src, context);
+
+        runTest(t, require_('entry'));
+      });
   });
 };
