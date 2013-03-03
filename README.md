@@ -1,6 +1,6 @@
-[![build status](https://secure.travis-ci.org/thlorenz/browserify-shim.png)](http://travis-ci.org/thlorenz/browserify-shim)
+#browserify-shim [![build status](https://secure.travis-ci.org/thlorenz/browserify-shim.png)](http://travis-ci.org/thlorenz/browserify-shim)
 
-# Make CommonJS-Incompatible Files Browserifyable
+## Make CommonJS-Incompatible Files Browserifyable
 
 ```js
 var browserify = require('browserify')
