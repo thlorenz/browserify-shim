@@ -4,7 +4,6 @@ var path    =  require('path')
   , fs      =  require('fs')
   , format  =  require('util').format
   , through =  require('through')
-  , buildScriptDir    =  path.dirname(module.parent.filename)
   ;
 
 function inspect(obj, depth) {
@@ -87,7 +86,7 @@ module.exports = function shim(browserifyInstance, configs) {
 
       validate(config);
 
-      var resolvedPath = require.resolve(path.resolve(buildScriptDir, config.path));
+      var resolvedPath = require.resolve(path.resolve(config.path));
 
       shims[resolvedPath] = config;
       browserifyInstance.require(resolvedPath, { expose: alias });
