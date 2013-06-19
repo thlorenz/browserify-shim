@@ -15,7 +15,11 @@
   "keywords": [
     "browserify",
     "shim",
-    "jquery"
+    "global",
+    "globals",
+    "transform",
+    "window",
+    "commonjs"
   ],
   "author": "Thorsten Lorenz <thlorenz@gmx.de> (thlorenz.com)",
   "license": "MIT",
