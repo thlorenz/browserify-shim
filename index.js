@@ -45,10 +45,10 @@ function bindWindowWithExports(s, dependencies) {
   // purposely make module and define be 'undefined',
   // but pass a function that allows exporting our dependency from the window or the context
   
-  return '(function browserifyShim(module, define, browserify_shim__define__module__export__) {\n'
+  return '(function browserifyShim(module, exports, define, browserify_shim__define__module__export__) {\n'
       + dependencies 
       + s
-      + '\n}).call(global, undefined, undefined, function defineExport(ex) { module.exports = ex; });\n';
+      + '\n}).call(global, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });\n';
 }
 
 function bindWindowWithoutExports(s, dependencies) {
