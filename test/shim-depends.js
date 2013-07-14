@@ -7,19 +7,19 @@ var browserify = require('browserify')
 
 var jquery = { path: './fixtures/shims/crippled-jquery', exports: '$' };
 var underscore = { path: './fixtures/shims/lib-exporting-_', exports: null };
-var dependent = { 
+var dependent = {
     path: './fixtures/shims/lib-depending-on-global-jquery'
-  , exports: 'dep' 
+  , exports: 'dep'
   , depends: { jquery: '$' }
 };
-var multidependent = { 
+var multidependent = {
     path: './fixtures/shims/lib-depending-on-global-jquery-and-_'
-  , exports: 'dep' 
+  , exports: 'dep'
   , depends: { jquery: '$', underscore: '_' }
 };
 
 test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
-  
+
   shim(browserify(), {
       jquery    :  jquery
     , dependent :  dependent
@@ -30,6 +30,7 @@ test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
     src += '\nrequire("dependent")';
 
     var ctx = { window: {}, console: console };
+    ctx.self = ctx.window;
     vm.runInNewContext(src, ctx);
 
     t.equal(ctx.window.dep.jqVersion, '1.8.3', 'when dependent gets required, $ is attached to the window');
@@ -39,7 +40,7 @@ test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
 });
 
 test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends on both', function (t) {
-  
+
   shim(browserify(), {
       jquery         :  jquery
     , underscore     :  underscore
@@ -51,6 +52,7 @@ test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends
     src += '\nrequire("multidependent")';
 
     var ctx = { window: {}, console: console };
+    ctx.self = ctx.window;
     vm.runInNewContext(src, ctx);
 
     t.equal(ctx.window.dep.jqVersion, '1.8.3', 'when multidependent gets required, $ is attached to the window');
