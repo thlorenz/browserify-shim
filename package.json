@@ -1,12 +1,12 @@
 {
   "name": "browserify-shim",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Makes CommonJS-incompatible modules browserifyable.",
   "main": "index.js",
   "scripts": {
     "test": "tap test/*.js",
-    "shim-jquery": "npm install opener && cd ./examples/shim-jquery && npm install && node build.js && opener index.html",
-    "shim-underscore": "npm install opener && cd ./examples/shim-underscore && npm install && node build.js && opener index.html"
+    "shim-jquery": "npm install opener && cd ./examples/shim-jquery && mkdir ./js/build; npm install && node build.js && opener index.html",
+    "shim-underscore": "npm install opener && cd ./examples/shim-underscore && mkdir ./js/build; npm install && node build.js && opener index.html"
   },
   "repository": {
     "type": "git",
