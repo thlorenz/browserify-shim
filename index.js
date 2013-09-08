@@ -23,7 +23,8 @@ function validate(config) {
   if (!config.hasOwnProperty('path'))
     throw new Error('browserify-shim needs at least a path and exports to do its job, you are missing the path.');
   if (!config.hasOwnProperty('exports'))
-    throw new Error('browserify-shim needs at least a path and exports to do its job, you are missing the exports.');
+    throw new Error('browserify-shim needs at least a path and exports to do its job, you are missing the exports. ' +
+      'If this module has no exports, specify exports as null.');
 }
 
 function requireDependencies(depends) {
