@@ -1,5 +1,5 @@
 {
-  "main": "main.js",
+  "main": "./main.js",
   "browserify": {
     "transform": [
       "browserify-shim"

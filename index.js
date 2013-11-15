@@ -1,30 +1,31 @@
 'use strict';
 
-var path    =  require('path')
-  , fs      =  require('fs')
-  , format  =  require('util').format
-  , through =  require('through')
-  , buildScriptDir    =  path.dirname(module.parent.filename)
+var path           =  require('path')
+  , fs             =  require('fs')
+  , util           =  require('util')
+  , format         =  require('util').format
+  , through        =  require('through')
+  , parentDir      =  require('find-parent-dir')
   ;
 
 function inspect(obj, depth) {
-  return require('util').inspect(obj, false, depth || 5, true);
+  return util.inspect(obj, false, depth || 5, true);
 }
 
-function preValidate(browserifyInstance, configs) {
-  if (!browserifyInstance || typeof browserifyInstance.require !== 'function' || typeof browserifyInstance.transform !== 'function')
-    throw new Error('browserify-shim needs to be passed a proper browserify instance as the first argument.\n' +
-                   ' you passed:' + inspect(browserifyInstance));
-  if (!configs || typeof configs !== 'object') 
-    throw new Error('browserify-shim needs to be passed a hashmap of one or more shim configs as the second argument.');
-}
+function validate(key, config, dir) {
+  console.log(config);
+  var msg
+    , details = 'When evaluating shim "' + key + '": ' + inspect(config) + '\ninside ' + dir + '\n';
 
-function validate(config) {
-  if (!config.hasOwnProperty('path'))
-    throw new Error('browserify-shim needs at least a path and exports to do its job, you are missing the path.');
-  if (!config.hasOwnProperty('exports'))
-    throw new Error('browserify-shim needs at least a path and exports to do its job, you are missing the exports. ' +
-      'If this module has no exports, specify exports as null.');
+  if (!config.hasOwnProperty('path')) {
+    msg = 'browserify-shim needs at least a path and exports to do its job, you are missing the path.';
+    throw new Error(details + msg);
+  }
+  if (!config.hasOwnProperty('exports')) {
+    msg = 'browserify-shim needs at least a path and exports to do its job, you are missing the exports. ' +
+          '\nIf this module has no exports, specify exports as null.'
+    throw new Error(details + msg);
+  }
 }
 
 function requireDependencies(depends) {
@@ -78,37 +79,53 @@ function wrap(content, config) {
   return boundWindow;
 }
 
-module.exports = function shim(browserifyInstance, configs) {
-  var shims = {};
-  preValidate(browserifyInstance, configs);
+var shimsCache = {}
+  , byPath = {};
 
-  Object.keys(configs)
-    .forEach(function (alias) {
-      var config = configs[alias];
-
-      validate(config);
-
-      var resolvedPath = require.resolve(path.resolve(buildScriptDir, config.path));
-
-      shims[resolvedPath] = config;
-      browserifyInstance.require(resolvedPath, { expose: alias });
-    });
-
-  browserifyInstance.transform(function (file) {
-      var content = '';
-      return through(
-          function write(buf) {
-            content += buf;
-          }
-        , function end() {
-            var config = shims[file] 
-              , transformed = config ? wrap(content, config) : content;
-
-            this.queue(transformed);
-            this.queue(null);
-          }
-      );
+function updateCache(packageJson_dir, shims) {
+  shimsCache[packageJson_dir] = shims;
+  Object.keys(shims).forEach(function(k) {
+    var shim = shims[k]; 
+    validate(k, shim, packageJson_dir);
+    byPath[shim.path] = shim;
   });
-  
-  return browserifyInstance;
-};
+}
+
+function resolveShims (file, cb) {
+  parentDir(file, 'package.json', function (err, dir) {
+    if (err) return cb(err);
+    if (shimsCache[dir]) return cb(null, shimsCache[dir]);
+
+    var pack = require(path.join(dir, 'package.json'));
+
+    var shimFile = pack.browserify && pack.browserify.shim;
+    if (!shimFile) return cb(); 
+
+    try {
+      var mod = require(path.join(dir, shimFile));
+      updateCache(dir, mod);
+      cb();
+    } catch (err) {
+      return cb(err);
+    }
+  });
+}
+
+module.exports = function (file) {
+  var content = '';
+  var stream = through(write, end);
+  return stream;
+
+  function write(buf) { content += buf; }
+  function end() {
+    resolveShims(file, function (err) {
+      if (err) return console.error(err);
+      
+      var config = byPath[file] 
+        , transformed = config ? wrap(content, config) : content;
+
+      stream.queue(transformed);
+      stream.queue(null);
+    });
+  }
+}

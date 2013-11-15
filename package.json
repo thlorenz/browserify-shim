@@ -31,7 +31,8 @@
     "browserify": "~2.35.2"
   },
   "dependencies": {
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "find-parent-dir": "~0.1.0"
   },
   "peerDependencies": {
     "browserify": ">= 2.3.0 < 3"
