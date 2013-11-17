@@ -1,0 +1,10 @@
+{
+  "transform": [ "browserify-shim" ],
+
+  "browserify-shim": {
+    "vendor/x"    :  "$",
+    "vendor/x-ui" :  ":vendor/x",
+    "vendor/y"    :  "Y:vendor/x|$",
+    "vendor/z"    :  "zorro:vendor/x|$:vendor/y|YNOT"
+  }
+}

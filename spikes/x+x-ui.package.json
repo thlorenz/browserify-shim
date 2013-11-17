@@ -1,0 +1,19 @@
+{
+  "browser": {
+    "x": "vendor/x.js",
+    "x-ui": "vendor/x-ui.js",
+    "y": "vendor/y.js",
+    "z": "vendor/z.js"
+  },
+
+  "transform": [ "browserify-shim" ],
+
+  "browserify-shim": {
+    "x": "$",
+    "x-ui": ":x",
+    "y": "Y:x|$",
+    "z": "zorro:x|$:y:YNOT"
+  }
+}
+
+"{id}": "(export){0,1}(:dependency|dep-export)*"
