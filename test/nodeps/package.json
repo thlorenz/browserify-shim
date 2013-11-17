@@ -3,7 +3,7 @@
   "browserify": {
     "transform": [
       "browserify-shim"
-    ],
-    "shim": "./shim.js"
-  }
+    ]
+  },
+  "browserify-shim": "./shim.js"
 }
