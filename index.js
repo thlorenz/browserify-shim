@@ -1,32 +1,10 @@
 'use strict';
 
-var path           =  require('path')
-  , fs             =  require('fs')
-  , util           =  require('util')
-  , format         =  require('util').format
-  , through        =  require('through')
-  , parentDir      =  require('find-parent-dir')
+var util         =  require('util')
+  , format       =  require('util').format
+  , through      =  require('through')
+  , resolveShims =  require('./lib/resolve-shims')
   ;
-
-function inspect(obj, depth) {
-  return util.inspect(obj, false, depth || 5, true);
-}
-
-function validate(key, config, dir) {
-  console.log(config);
-  var msg
-    , details = 'When evaluating shim "' + key + '": ' + inspect(config) + '\ninside ' + dir + '\n';
-
-  if (!config.hasOwnProperty('path')) {
-    msg = 'browserify-shim needs at least a path and exports to do its job, you are missing the path.';
-    throw new Error(details + msg);
-  }
-  if (!config.hasOwnProperty('exports')) {
-    msg = 'browserify-shim needs at least a path and exports to do its job, you are missing the exports. ' +
-          '\nIf this module has no exports, specify exports as null.'
-    throw new Error(details + msg);
-  }
-}
 
 function requireDependencies(depends) {
   if (!depends) return '';
@@ -79,38 +57,6 @@ function wrap(content, config) {
   return boundWindow;
 }
 
-var shimsCache = {}
-  , byPath = {};
-
-function updateCache(packageJson_dir, shims) {
-  shimsCache[packageJson_dir] = shims;
-  Object.keys(shims).forEach(function(k) {
-    var shim = shims[k]; 
-    validate(k, shim, packageJson_dir);
-    byPath[shim.path] = shim;
-  });
-}
-
-function resolveShims (file, cb) {
-  parentDir(file, 'package.json', function (err, dir) {
-    if (err) return cb(err);
-    if (shimsCache[dir]) return cb(null, shimsCache[dir]);
-
-    var pack = require(path.join(dir, 'package.json'));
-
-    var shimFile = pack.browserify && pack.browserify.shim;
-    if (!shimFile) return cb(); 
-
-    try {
-      var mod = require(path.join(dir, shimFile));
-      updateCache(dir, mod);
-      cb();
-    } catch (err) {
-      return cb(err);
-    }
-  });
-}
-
 module.exports = function (file) {
   var content = '';
   var stream = through(write, end);
@@ -118,11 +64,10 @@ module.exports = function (file) {
 
   function write(buf) { content += buf; }
   function end() {
-    resolveShims(file, function (err) {
+    resolveShims(file, function (err, config) {
       if (err) return console.error(err);
       
-      var config = byPath[file] 
-        , transformed = config ? wrap(content, config) : content;
+      var transformed = config ? wrap(content, config) : content;
 
       stream.queue(transformed);
       stream.queue(null);

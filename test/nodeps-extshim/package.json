@@ -1,5 +1,8 @@
 {
   "main": "./main.js",
+  "browser": {
+    "non-cjs": "./vendor/non-cjs.js"
+  },
   "browserify": {
     "transform": [
       "browserify-shim"
