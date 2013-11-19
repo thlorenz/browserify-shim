@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  './vendor/non-cjs': { exports : 'noncjs' }
+  './vendor/non-cjs.js': { exports : 'noncjs' }
 };

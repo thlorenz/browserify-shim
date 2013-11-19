@@ -67,7 +67,7 @@ var go = module.exports = function (file) {
   function end() {
     resolveShims(file, function (err, config) {
       if (err) return console.error(err);
-      debug.inspect(config);
+      debug.inspect({ config: config });
 
       var transformed = config ? wrap(content, config) : content;
 
