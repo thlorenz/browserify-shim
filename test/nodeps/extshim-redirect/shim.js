@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  'non-cjs': { exports :  'noncjs' }
+  'non-cjs': { exports : 'noncjs' }
 };
