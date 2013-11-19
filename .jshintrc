@@ -15,5 +15,6 @@
   "smarttabs": true,
   "strict": true,
   "laxcomma": true,
+  "laxbreak": true,
   "asi": true
 }
