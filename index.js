@@ -4,6 +4,7 @@ var util         =  require('util')
   , format       =  require('util').format
   , through      =  require('through')
   , resolveShims =  require('./lib/resolve-shims')
+  , debug        =  require('./lib/debug')
   ;
 
 function requireDependencies(depends) {
@@ -57,7 +58,7 @@ function wrap(content, config) {
   return boundWindow;
 }
 
-module.exports = function (file) {
+var go = module.exports = function (file) {
   var content = '';
   var stream = through(write, end);
   return stream;
@@ -66,11 +67,22 @@ module.exports = function (file) {
   function end() {
     resolveShims(file, function (err, config) {
       if (err) return console.error(err);
-      
+      debug.inspect(config);
+
       var transformed = config ? wrap(content, config) : content;
 
       stream.queue(transformed);
       stream.queue(null);
     });
   }
+}
+
+// Test
+if (!module.parent && typeof window === 'undefined') {
+  var file = require.resolve('./test/nodeps/extshim/vendor/non-cjs');
+  var stream = go(file)
+  stream.pipe(process.stdout);
+
+  stream.write('console.log("beep boop");\n');
+  stream.end();
 }
