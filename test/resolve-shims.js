@@ -16,8 +16,8 @@ test('\nno dependencies, external shim file, no redirect', function (t) {
   });
 })
 
-test('\nno dependencies, external shim, redirect non-cjs', function (t) {
-  resolve(require.resolve('./nodeps/extshim-redirect/vendor/non-cjs'), function (err, res) {
+test('\nno dependencies, external shim, exposed as non-cjs', function (t) {
+  resolve(require.resolve('./nodeps/extshim-exposed/vendor/non-cjs'), function (err, res) {
     if (err) return t.fail(err);
     t.deepEqual(res, { exports: 'noncjs', depends: undefined }, 'resolves noncjs shim correctly')
     t.end();
