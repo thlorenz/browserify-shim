@@ -5,5 +5,5 @@
       "browserify-shim"
     ]
   },
-  "browserify-shim": "./shim.js"
+  "browserify-shim": "./config/shim.js"
 }
