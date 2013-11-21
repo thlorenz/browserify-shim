@@ -8,18 +8,19 @@ var browserify = require('browserify')
 function inspect(obj, depth) {
   console.error(require('util').inspect(obj, false, depth || 5, true));
 }
+
 test('\nshimming nodeps with external shim, no depends', function (t) {
   browserify( { ignoreGlobals: true })
-    .require(require.resolve('./nodeps/extshim/main', { expose: 'main' }))
+    .require(require.resolve('./nodeps/extshim/main'))
     .bundle(function (err, src) {
-      if (err) return t.fail(err);
+      if (err) { t.fail(err); return t.end(); }
 
       var ctx = { window: {}, console: console };
       ctx.self = ctx.window;
       var require_ = vm.runInNewContext(src, ctx);
        
-      inspect(require_(require.resolve('./nodeps/extshim/main')).toString());
+      var main = require_(require.resolve('./nodeps/extshim/main'));
+      t.deepEqual(main(), { name: 'non-cjs', version: 1.1 }, 'shims non-cjs');
       t.end()
     });
-  
 })

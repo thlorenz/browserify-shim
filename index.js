@@ -79,10 +79,11 @@ var go = module.exports = function (file) {
 
 // Test
 if (!module.parent && typeof window === 'undefined') {
-  var file = require.resolve('./test/nodeps/inlineshim/vendor/non-cjs');
-  var stream = go(file)
-  stream.pipe(process.stdout);
+  var file = require.resolve('./test/nodeps/extshim/main');
+  var browserify = require('browserify');
 
-  stream.write('console.log("beep boop");\n');
-  stream.end();
+  browserify( { ignoreGlobals: true })
+    .require(file)
+    .bundle()
+    .pipe(process.stdout);
 }
