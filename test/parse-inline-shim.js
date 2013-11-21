@@ -9,19 +9,20 @@ function inspect(obj, depth) {
 }
 
 test('\nparsing shims with pure string spec, single depends as string and multi-depends as array', function (t) {
-  var config = {
+  var shims = {
     jquery: '$',
-    'non-cjs': 'noncjs',
-    'non-cjs-dep': { exports: 'noncjsdep', depends: 'non-cjs:noncjs' },
-    'just-dep': { exports: 'justdep', depends: [ 'non-cjs:noncjs', 'jquery:$' ] },
+    'non-cjs'       : 'noncjs',
+    'non-cjs-dep'   : { exports: 'noncjsdep'    , depends: 'non-cjs:noncjs' },
+    'noexport-dep'  : { exports: 'noexportdep'  , depends: 'non-cjs' },
+    'just-dep'      : { exports: 'justdep'      , depends: [ 'non-cjs:noncjs', 'jquery:$' ] },
   }
-  inspect(config)
   t.deepEqual(
-      parse(config)
-    , { jquery       :  { exports :  '$'        ,  depends:  undefined },
-        'non-cjs'    :  { exports :  'noncjs'   ,  depends:  undefined },
-        'non-cjs-dep':  { exports :  'noncjsdep',  depends:  { 'non-cjs':  'noncjs' } },
-        'just-dep'   :  { exports :  'justdep'  ,  depends:  { 'non-cjs':  'noncjs',  jquery :  '$' } }
+      parse(shims)
+    , { jquery        :  { exports :  '$'           ,  depends:  undefined },
+        'non-cjs'     :  { exports :  'noncjs'      ,  depends:  undefined },
+        'non-cjs-dep' :  { exports :  'noncjsdep'   ,  depends:  { 'non-cjs':  'noncjs' } },
+        'noexport-dep':  { exports :  'noexportdep' ,  depends:  { 'non-cjs':  null } },
+        'just-dep'    :  { exports :  'justdep'     ,  depends:  { 'non-cjs':  'noncjs',  jquery :  '$' } }
       } 
   )
   t.end()
