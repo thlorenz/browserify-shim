@@ -9,9 +9,9 @@ function inspect(obj, depth) {
   console.error(require('util').inspect(obj, false, depth || 5, true));
 }
 
-test('\nshimming nodeps with external shim, no depends', function (t) {
+function bundleNcheck(relPath, t) {
   browserify( { ignoreGlobals: true })
-    .require(require.resolve('./nodeps/extshim/main'))
+    .require(require.resolve(relPath))
     .bundle(function (err, src) {
       if (err) { t.fail(err); return t.end(); }
 
@@ -19,8 +19,20 @@ test('\nshimming nodeps with external shim, no depends', function (t) {
       ctx.self = ctx.window;
       var require_ = vm.runInNewContext(src, ctx);
        
-      var main = require_(require.resolve('./nodeps/extshim/main'));
+      var main = require_(require.resolve(relPath));
       t.deepEqual(main(), { name: 'non-cjs', version: 1.1 }, 'shims non-cjs');
       t.end()
     });
-})
+}
+
+test('\nshimming nodeps with external shim, no depends'
+    , bundleNcheck.bind(null, './nodeps/extshim/main'))
+
+test('\nshimming nodeps with external shim, no depends, exposed non-cjs'
+    , bundleNcheck.bind(null, './nodeps/extshim-exposed/main'))
+
+test('\nshimming nodeps with inlined shim, no depends'
+    , bundleNcheck.bind(null, './nodeps/inlineshim/main'))
+
+test('\nshimming nodeps with inlined shim, no depends, exposed non-cjs'
+    , bundleNcheck.bind(null, './nodeps/inlineshim-exposed/main'))
