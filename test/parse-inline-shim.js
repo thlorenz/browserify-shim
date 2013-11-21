@@ -1,11 +1,14 @@
 'use strict';
 /*jshint asi: true */
 
-var test = require('tap').test
+var debug =  false;
+var test  =  debug  ? function () {} : require('tap').test
+var test_ =  !debug ? function () {} : require('tap').test
+
 var parse = require('../lib/parse-inline-shims')
 
 function inspect(obj, depth) {
-  return require('util').inspect(obj, false, depth || 5, true);
+  console.error(require('util').inspect(obj, false, depth || 5, true));
 }
 
 test('\nparsing shims with pure string spec, single depends as string and multi-depends as array', function (t) {
@@ -53,4 +56,20 @@ test('\nparsing shims with invalid depends', function (t) {
   )
 
   t.end();
+})
+
+test('\nparsing shims with whitespaces', function (t) {
+  var shims = {
+    jquery: '$',
+    'non-cjs'       : 'noncjs',
+    'non-cjs-dep'   : { exports: 'noncjsdep  ', depends: 'non-cjs :noncjs' },
+    'just-dep '     : { exports: '  justdep' , depends: [ ' non-cjs:noncjs', 'jquery:  $ ' ] },
+  }
+  var res = parse(shims);
+  var jd = res['just-dep']
+  t.equal(res['non-cjs-dep'].exports, 'noncjsdep', 'removes trailing space from export')
+  t.equal(jd.exports, 'justdep', 'removes leading space from exports')
+  t.equal(jd.depends.jquery, '$', 'removes spaces around depends export')
+
+  t.end()
 })
