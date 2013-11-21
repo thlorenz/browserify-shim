@@ -5,7 +5,7 @@ var test = require('tap').test
 var parse = require('../lib/parse-inline-shims')
 
 function inspect(obj, depth) {
-  console.error(require('util').inspect(obj, false, depth || 5, true));
+  return require('util').inspect(obj, false, depth || 5, true);
 }
 
 test('\nparsing shims with pure string spec, single depends as string and multi-depends as array', function (t) {
@@ -26,4 +26,31 @@ test('\nparsing shims with pure string spec, single depends as string and multi-
       } 
   )
   t.end()
+})
+
+test('\nparsing shims with invalid depends', function (t) {
+  function shouldFail(shims, msg) {
+    try { 
+      parse(shims); 
+      t.fail('should have failed');
+    } catch(e) { 
+      t.similar(e.message, /Invalid depends specification/, msg);
+    }
+  }
+
+  shouldFail({
+        'non-cjs': 'noncjs',
+        'non-cjs-dep': { exports: 'noncjsdep', depends: 'non-cjs:noncjs:jquery:$' },
+      }
+    , 'more than one depends in one declaration'
+  )
+
+  shouldFail({
+        'non-cjs': 'noncjs',
+        'non-cjs-dep': { exports: 'noncjsdep', depends: ':noncjs' },
+      }
+    , 'no export name'
+  )
+
+  t.end();
 })
