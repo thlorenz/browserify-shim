@@ -6,6 +6,7 @@
   },
   "browserify-shim": {
     "non-cjs": "noncjs",
+    "./vendor/non-cjs-core.js": "noncjscore",
     "non-cjs-dep": { 
       "exports": "noncjsdep", 
       "depends": [ "non-cjs:noncjs", "./vendor/non-cjs-core.js:core" ] 

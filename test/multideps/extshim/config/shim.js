@@ -2,7 +2,7 @@
 
 module.exports = {
   'non-cjs': { exports : 'noncjs' },
-  'non-cjs-core': { exports : 'noncjscore' },
+  '../vendor/non-cjs-core.js': { exports : 'noncjscore' },
   'non-cjs-dep': { 
       exports: 'noncjsdep'
       // non-cjs-core is not exposed so we need to refer to it under its relative path
