@@ -1,0 +1,22 @@
+{
+  "name": "root",
+  "main": "./main.js",
+  "browser": {
+    "root-non-cjs": "./vendor/non-cjs.js"
+  },
+  "browserify-shim": {
+    "root-non-cjs": {
+      "exports": "rootnoncjs",
+      "depends": [ "sub1", "sub2" ]
+    }
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "dependencies": {
+    "sub1": "*",
+    "sub2": "*"
+  }
+}
