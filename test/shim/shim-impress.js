@@ -6,7 +6,7 @@ var test = require('tap').test
   , baseUrl = 'https://raw.github.com/bartaz/impress.js/'
 
 test('impressjs 0.5.3', function (t) {
-  var shimConfig = { impressjs: {  exports: 'impress' } }
+  var shimConfig = { exports: 'impress' }
   t.plan(1)
   testLib(t, { 
       name: 'impress.js'

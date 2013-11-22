@@ -19,5 +19,5 @@
     ? (module.exports = eve) 
     : (typeof define != "undefined" 
       ? (define("eve", [], function() { return eve; })) 
-      : (glob.eve = eve));
+      : (window.eve = eve));
 })(this);

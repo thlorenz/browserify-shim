@@ -1,12 +1,14 @@
 'use strict';
 /*jshint asi: true*/
 
-var request =  require('request')
-  , fs      =  require('fs')
-  , vm      =  require('vm')
-  , path    =  require('path')
-  , shim    =  require('../..')
-  , jsdom   =  require('jsdom').jsdom
+var request    =  require('request')
+  , fs         =  require('fs')
+  , vm         =  require('vm')
+  , path       =  require('path')
+  , jsdom      =  require('jsdom').jsdom
+  , proxyquire =  require('proxyquire')
+  , browserify =  require('browserify')
+
   , shimsdir  =  path.join(__dirname, '..', 'fixtures', 'shims')
   , entryFile =  path.join(__dirname, '..', 'fixtures', 'entry-straight-export.js')
 
@@ -26,7 +28,6 @@ function generateEntry(alias) {
 }
 
 require('tap').on('end', function () {
-//  fs.unlinkSync(file);
   fs.unlinkSync(entryFile);
 })
 
@@ -36,18 +37,35 @@ module.exports = function testLib(t, opts) {
     , shimConfig =  opts.shimConfig
     , runTest    =  opts.test
 
-  request( baseUrl + name, function(err, resp, body) {
-    var file = path.join(shimsdir, name)
-      , firstConfigKey = Object.keys(shimConfig)[0]
-      , firstConfig = shimConfig[firstConfigKey]
+  request( baseUrl + name, function(err, res, body) {
+    if (err) { 
+      console.error(err);
+      t.fail(err); 
+      return t.end() 
+    }
 
-    firstConfig.path = file;
+    var file = path.join(shimsdir, name)
 
     fs.writeFileSync(file, body, 'utf-8');
-    fs.writeFileSync(entryFile, generateEntry(firstConfigKey), 'utf-8');
+    fs.writeFileSync(entryFile, generateEntry(file), 'utf-8');
 
-    shim(require('browserify')(), shimConfig)
-      .require(require.resolve(entryFile), { expose: 'entry' })
+    var entry = require.resolve(entryFile);
+
+    function resolveShims (file_, cb) {
+      var res = file_ === file
+        ? shimConfig 
+        : null;
+      
+      setTimeout(cb.bind(null, null, res), 0)
+    }
+
+    var shim = proxyquire('../../../', {
+      './lib/resolve-shims': resolveShims
+    })
+
+    browserify()
+      .transform(shim)
+      .require(entryFile)
       .bundle(function (err, src) {
 
         fs.unlinkSync(file);
@@ -60,7 +78,8 @@ module.exports = function testLib(t, opts) {
         Object.keys(window).forEach(function (k) { context[k] = window[k] })
         var require_ = vm.runInContext(src, context);
 
-        runTest(t, require_('entry'));
+        runTest(t, require_(entryFile));
+        t.end();
       });
   });
 };

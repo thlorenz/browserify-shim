@@ -6,7 +6,7 @@ var testLib = require('./utils/test-lib')
   , baseUrl = 'http://zeptojs.com/'
 
 test('zepto', function (t) {
-  var shimConfig = { zepto : { exports: '$' } }
+  var shimConfig = { exports: '$' }
   t.plan(1)
   testLib(t, { 
       name: 'zepto.min.js'

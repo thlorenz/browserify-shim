@@ -1,4 +1,6 @@
-var $ = require('jquery')
+'use strict';
+
+var $ = require('./shims/crippled-jquery')
   , foo = require('./foo');
 
 console.log('jquery version', $().jquery);

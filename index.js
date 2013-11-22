@@ -58,7 +58,7 @@ function wrap(content, config) {
   return boundWindow;
 }
 
-var go = module.exports = function (file) {
+module.exports = function (file) {
   var content = '';
   var stream = through(write, end);
   return stream;
@@ -80,11 +80,11 @@ var go = module.exports = function (file) {
 
 // Test
 if (!module.parent && typeof window === 'undefined') {
-  var file = require.resolve('./test/multideps/extshim/main');
+  var file = require.resolve('./test/packs/');
   var browserify = require('browserify');
 
   browserify( { ignoreGlobals: true })
     .require(file)
     .bundle()
-//    .pipe(process.stdout);
+    .pipe(process.stdout);
 }
