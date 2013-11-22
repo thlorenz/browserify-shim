@@ -2,6 +2,7 @@
 /*jshint asi: true */
 
 var test = require('tap').test
+var path = require('path');
 var resolve = require('../lib/resolve-shims');
 
 function inspect(obj, depth) {
@@ -57,6 +58,36 @@ test('\nnon-cjs-dep depends on non-cjs, inline shims, all exposed', function (t)
     t.deepEqual(res
      , { exports: 'noncjsdep', depends: { 'non-cjs': 'noncjs' } }
      , 'resolves noncjsdep shim correctly'
+    )
+    t.end();
+  });
+})
+
+test('\nnon-cjs-dep depends on non-cjs and non-cjs-core, external shim file, all exposed except non-cjs-core', function (t) {
+  resolve(require.resolve('./multideps/extshim/vendor/non-cjs-dep'), function (err, res) {
+    if (err) { t.fail(err); return t.end(); }
+    var corePath = path.join(__dirname, 'multideps/extshim/vendor/non-cjs-core.js');
+    var depends = { 'non-cjs': 'noncjs' }
+    depends[corePath] = 'core';
+    t.deepEqual(
+        res
+      , { exports: 'noncjsdep', depends: depends }
+      , 'resolves noncjsdep shim correctly'
+    )
+    t.end();
+  });
+})
+
+test('\nnon-cjs-dep depends on non-cjs and non-cjs-core, inline shims, all exposed except non-cjs-core', function (t) {
+  resolve(require.resolve('./multideps/inlineshim/vendor/non-cjs-dep'), function (err, res) {
+    if (err) { t.fail(err); return t.end(); }
+    var corePath = path.join(__dirname, 'multideps/inlineshim/vendor/non-cjs-core.js');
+    var depends = { 'non-cjs': 'noncjs' }
+    depends[corePath] = 'core';
+    t.deepEqual(
+        res
+      , { exports: 'noncjsdep', depends: depends }
+      , 'resolves noncjsdep shim correctly'
     )
     t.end();
   });
