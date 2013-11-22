@@ -43,7 +43,6 @@ test('\nno dependencies, inline shims, exposed as non-cjs', function (t) {
 test('\nnon-cjs-dep depends on non-cjs, external shim file, all exposed', function (t) {
   resolve(require.resolve('./deps/extshim/vendor/non-cjs-dep'), function (err, res) {
     if (err) { t.fail(err); return t.end(); }
-    inspect(res);
     t.deepEqual(res
      , { exports: 'noncjsdep', depends: { 'non-cjs': 'noncjs' } }
      , 'resolves noncjsdep shim correctly'
@@ -55,11 +54,10 @@ test('\nnon-cjs-dep depends on non-cjs, external shim file, all exposed', functi
 test('\nnon-cjs-dep depends on non-cjs, inline shims, all exposed', function (t) {
   resolve(require.resolve('./deps/inlineshim/vendor/non-cjs-dep'), function (err, res) {
     if (err) { t.fail(err); return t.end(); }
-    inspect(res);
-    /*t.deepEqual(res
+    t.deepEqual(res
      , { exports: 'noncjsdep', depends: { 'non-cjs': 'noncjs' } }
      , 'resolves noncjsdep shim correctly'
-    )*/
+    )
     t.end();
   });
 })
