@@ -12,12 +12,12 @@ test('when a module only attaches to the window after checking for module.export
   var file = require.resolve('./fixtures/shims/lib-with-exports-define-global-problem.js');
   var entry = require.resolve('./fixtures/entry-requires-lib-with-global-problem.js');
 
-  function resolveShims (file_, cb) {
+  function resolveShims (file_, msgs, cb) {
     var res = file_ === file
       ? { exports: 'eve' } 
       : null;
     
-    setTimeout(cb.bind(null, null, res), 0)
+    setTimeout(cb.bind(null, null, { shim: res }), 0)
   }
 
   var shim = proxyquire('../../', {

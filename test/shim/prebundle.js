@@ -9,12 +9,12 @@ test('\n# when I shim "jquery"', function (t) {
   var entry = require.resolve('./fixtures/entry-requires-jquery.js');
   var jqueryFullPath = require.resolve('./fixtures/shims/crippled-jquery')
 
-  function resolveShims (file_, cb) {
+  function resolveShims (file_, msgs, cb) {
     var res = file_ === jqueryFullPath 
       ? { exports: '$' } 
       : null;
     
-    setTimeout(cb.bind(null, null, res), 0)
+    setTimeout(cb.bind(null, null, { shim: res }), 0)
   }
   
   var shim = proxyquire('../../', {

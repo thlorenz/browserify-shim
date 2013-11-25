@@ -10,12 +10,12 @@ test('when I shim a module that declares its export as a var on the root level i
   var entry = require.resolve('./fixtures/entry-requires-root-level-var.js');
   var file = require.resolve('./fixtures/shims/root-level-var');
 
-  function resolveShims (file_, cb) {
+  function resolveShims (file_, msgs, cb) {
     var res = file_ === file
       ? { exports: 'nineties' } 
       : null;
     
-    setTimeout(cb.bind(null, null, res), 0)
+    setTimeout(cb.bind(null, null, { shim: res }), 0)
   }
 
   var shim = proxyquire('../../', {

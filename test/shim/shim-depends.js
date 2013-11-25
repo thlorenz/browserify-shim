@@ -34,12 +34,12 @@ function inspect(obj, depth) {
 
 test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
 
-  function resolveShims (file_, cb) {
+  function resolveShims (file_, msgs, cb) {
     var res;
     if (file_ === jqueryPath) res = jquery;
     if (file_ === dependentPath) res = dependent;
     
-    setTimeout(cb.bind(null, null, res), 0)
+    setTimeout(cb.bind(null, null, { shim: res }), 0)
   }
 
   var shim = proxyquire('../../', {
@@ -68,13 +68,13 @@ test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
 
 test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends on both', function (t) {
 
-  function resolveShims (file_, cb) {
+  function resolveShims (file_, msgs, cb) {
     var res;
     if (file_ === jqueryPath) res = jquery;
     if (file_ === underscorePath) res = underscore;
     if (file_ === multidependentPath) res = multidependent;
     
-    setTimeout(cb.bind(null, null, res), 0)
+    setTimeout(cb.bind(null, null, { shim: res }), 0)
   }
 
   var shim = proxyquire('../../', {

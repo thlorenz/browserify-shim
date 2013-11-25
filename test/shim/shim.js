@@ -15,12 +15,12 @@ test('when I shim "jquery" to a crippled jquery filerequire it inside the entry 
   var entry = require.resolve('./fixtures/entry-requires-jquery.js');
   var file = require.resolve('./fixtures/shims/crippled-jquery')
 
-  function resolveShims (file_, cb) {
+  function resolveShims (file_, msgs, cb) {
     var res = file_ === file
       ? { exports: '$' } 
       : null;
     
-    setTimeout(cb.bind(null, null, res), 0)
+    setTimeout(cb.bind(null, null, { shim: res }), 0)
   }
 
   var shim = proxyquire('../../', {

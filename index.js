@@ -65,12 +65,17 @@ module.exports = function (file) {
 
   function write(buf) { content += buf; }
   function end() {
-    resolveShims(file, function (err, config) {
-      if (err) return console.error(err);
-      debug('');
-      debug.inspect({ file: file, shim: config });
+    var messages = [];
+    resolveShims(file, messages, function (err, info) {
+      if (err) {
+        stream.emit('error', err);
+        return stream.queue(null);
+      }
 
-      var transformed = config ? wrap(content, config) : content;
+      debug('');
+      debug.inspect({ file: file, info: info, messages: messages });
+
+      var transformed = info.shim ? wrap(content, info.shim) : content;
 
       stream.queue(transformed);
       stream.queue(null);
@@ -86,5 +91,5 @@ if (!module.parent && typeof window === 'undefined') {
   browserify( { ignoreGlobals: true })
     .require(file)
     .bundle()
-    .pipe(process.stdout);
+//    .pipe(process.stdout);
 }

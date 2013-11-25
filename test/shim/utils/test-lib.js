@@ -51,12 +51,12 @@ module.exports = function testLib(t, opts) {
 
     var entry = require.resolve(entryFile);
 
-    function resolveShims (file_, cb) {
+    function resolveShims (file_, msgs, cb) {
       var res = file_ === file
         ? shimConfig 
         : null;
       
-      setTimeout(cb.bind(null, null, res), 0)
+      setTimeout(cb.bind(null, null, { shim: res }), 0)
     }
 
     var shim = proxyquire('../../../', {
