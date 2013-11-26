@@ -1,14 +1,9 @@
 {
-  "name": "shim-jquery",
+  "name": "shim-jquery-external",
   "version": "0.0.0",
-  "description": "Example of using browserify-shim to shim jquery for use with browserify",
+  "description": "Example of using browserify-shim to shim jquery for use with browserify, using an external shim file",
   "main": "./js/entry.js",
-  "browser": {
-    "jquery": "./js/vendor/jquery.js"
-  },
-  "browserify-shim": {
-    "jquery": "$"
-  },
+  "browserify-shim": "./config/shim.js",
   "browserify": {
     "transform": [
       "browserify-shim"

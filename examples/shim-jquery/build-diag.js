@@ -1,5 +1,7 @@
 'use strict';
 
+process.env.BROWSERIFYSHIM_DIAGNOSTICS = 1;
+
 var request = require('request')
   , fs      = require('fs')
   , path = require('path')

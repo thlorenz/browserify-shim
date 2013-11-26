@@ -1,21 +1,59 @@
-# Browserify-Shim jquery Example
+# Browserify-Shim jquery
 
-This example demonstrates using a shim fo jquery.
+This example demonstrates shimming jquery by adding all shim information to the `package.json`.
 
-The main part where it all happens is this snippet:
+The following config included in the
+[`package.json`](https://github.com/thlorenz/browserify-shim/blob/master/examples/shim-jquery/package.json) of this
+example project is needed to ensure that browserify runs the `browerify-shim` transform when bundling this project.
+
+```json
+{ 
+  "main": "./js/entry.js",
+  "browser": {
+    "jquery": "./js/vendor/jquery.js"
+  },
+  "browserify-shim": {
+    "jquery": "$"
+  },
+  "browserify": {
+    "transform": [ "browserify-shim" ]
+  }
+}
+```
+
+### Bundling via the command line
+
+Given this config you can build the bundle via: 
+
+    browserify -d . > js/bundle.js
+
+demonstrated [here](https://github.com/thlorenz/browserify-shim/blob/v3/examples/shim-jquery/cli.sh).
+
+If you want to turn on browserify shim diagnostics messages set the `BROWSERIFYSHIM_DIAGNOSTICS` environment variable
+when bundling i.e.:
+
+    BROWSERIFYSHIM_DIAGNOSTICS=1 browserify -d . > js/bundle.js
+
+demonstrated [here](https://github.com/thlorenz/browserify-shim/blob/v3/examples/shim-jquery/cli-diag.sh).
+
+**Note** that in both cases the `-d` flag is added as well in order to turn on browserify sourcemaps.  
+
+**Note** `.` tells browserify to use the current dir as the root of the bundling chain. As a result it finds `"main":
+"./js/entry.js"` in the `package.json` and thus uses that as the entry point.
+
+### Bundling via a `.js` script
+
+Alternatively you can write a short `build.js` to perform the bundling step:
 
 ```js
-  shim(browserify(), {
-      jquery: { path: './js/vendor/jquery.js', exports: '$' }
-  })
-  .require(require.resolve('./js/entry.js'), { entry: true })
-  .bundle(function (err, src) {
-    if (err) return console.error(err);
-
-    fs.writeFileSync(builtFile, src);
-    console.log('Build succeeded, open index.html to see the result.');
-  });
+  browserify()  
+    .require(require.resolve('./'), { entry: true })
+    .bundle({ debug: true })
+    .on('error', console.error.bind(console)) 
+    .pipe(fs.createWriteStream(path.join(__dirname, 'js', 'bundle.js'), 'utf8'))
 ```
+
+demonstrated [here](https://github.com/thlorenz/browserify-shim/blob/v3/examples/shim-jquery/build.js).
 
 To run this example:
 
@@ -26,10 +64,7 @@ Then:
 
     npm run shim-jquery
 
-Or if you enjoy typing a lot:
+Or to see diagnostic messages:
 
-    cd examples/shim-jquery
-
-    npm install
-    node build.js
-    open index.html
+  
+    npm run shim-jquery-diag

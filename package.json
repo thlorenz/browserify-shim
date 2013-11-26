@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "tap test/*.js && tap test/shim/*.js",
-    "shim-jquery": "npm install opener && cd ./examples/shim-jquery && mkdir ./js/build; npm install && node build.js && opener index.html",
-    "shim-underscore": "npm install opener && cd ./examples/shim-underscore && mkdir ./js/build; npm install && node build.js && opener index.html"
+    "shim-jquery": "npm install opener && cd ./examples/shim-jquery && npm install && node build.js && opener index.html",
+    "shim-jquery-diag": "npm install opener && cd ./examples/shim-jquery && npm install && node build-diag.js && opener index.html"
   },
   "repository": {
     "type": "git",
