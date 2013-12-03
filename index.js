@@ -82,14 +82,3 @@ module.exports = function (file) {
     });
   }
 }
-
-// Test
-if (!module.parent && typeof window === 'undefined') {
-  var file = require.resolve('./test/packs/');
-  var browserify = require('browserify');
-
-  browserify( { ignoreGlobals: true })
-    .require(file)
-    .bundle()
-//    .pipe(process.stdout);
-}

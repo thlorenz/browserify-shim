@@ -1,28 +1,59 @@
 #browserify-shim [![build status](https://secure.travis-ci.org/thlorenz/browserify-shim.png?branch=master)](http://travis-ci.org/thlorenz/browserify-shim)
 
-## Make CommonJS-Incompatible Files Browserifyable
+### Make CommonJS-Incompatible Files Browserifyable
 
-```js
-var browserify = require('browserify')
-  , shim = require('browserify-shim');
+#### package.json
 
-shim(browserify(), {
-  // jQuery attaches itself to the window as '$' so we assign the exports accordingly
-  jquery: { path: './js/vendor/jquery.js', exports: '$' }
-})
-.require(require.resolve('./js/entry.js'), { entry: true })
-.bundle(function (err, src) {
-  if (err) return console.error(err);
-
-  fs.writeFileSync(builtFile, src);
-});
+```json
+{
+  "main": "./js/entry.js",
+  "browser": {
+    "jquery": "./js/vendor/jquery.js"
+  },
+  "browserify-shim": {
+    "jquery": "$"
+  },
+  "browserify": {
+    "transform": [ "browserify-shim" ]
+  },
+  "dependencies": {
+    "browserify-shim": "~3.0.0"
+  }
+}
 ```
+
+    browserify . -d -o bundle.js
+
+
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Installation](#installation)
+- [Features](#features)
+- [API](#api)
+  - [You Will Always](#you-will-always)
+      - [1. Install browserify-shim dependency](#1-install-browserify-shim-dependency)
+      - [2. Register browserify-shim as a transform with browserify](#2-register-browserify-shim-as-a-transform-with-browserify)
+      - [3. Provide browserify-shim config](#3-provide-browserify-shim-config)
+          - [Short Form vs. Long Form config](#short-form-vs-long-form-config)
+  - [You will sometimes](#you-will-sometimes)
+      - [Use aliases](#use-aliases)
+      - [Provide an external shim config](#provide-an-external-shim-config)
+      - [Diagnose what browserify-shim is doing](#diagnose-what-browserify-shim-is-doing)
+- [Multi Shim Example including dependencies](#multi-shim-example-including-dependencies)
+  - [a) Config inside `package.json` without aliases](#a-config-inside-packagejson-without-aliases)
+  - [b) Config inside `package.json` with aliases](#b-config-inside-packagejson-with-aliases)
+  - [c) Config inside `./config/shim.js` without aliases](#c-config-inside-configshimjs-without-aliases)
+      - [`package.json`](#packagejson)
+      - [`shim.js`](#shimjs)
+- [More Examples](#more-examples)
 
 ## Installation
 
     npm install browserify-shim
 
-For a version compatible with browserify@1.x run `npm install browserify-shim@1.x` instead.
+*For a version compatible with browserify@1.x run `npm install browserify-shim@1.x` instead.*
+
+*For a version compatible with the [v2 API](https://github.com/thlorenz/browserify-shim/tree/v2#api) `npm install browserify-shim@2.x` instead.*
 
 ## Features
 
@@ -31,6 +62,7 @@ The core features of browserify-shim are:
 - Shims **non-CommonJS** modules in order for them to be **browserified** by specifying an alias, the path to the file,
   and the identifier under which the module attaches itself to the global `window` object.
 - Includes `depends` for  shimming libraries that depend on other libraries being in the global namespace.
+- applies shims configured inside the dependencies of your package
 
 Additionally, it handles the following real-world edge cases:
 
@@ -41,83 +73,196 @@ Additionally, it handles the following real-world edge cases:
   shimming but try anyway to use AMD or CommonJS. For more info read the comment inside [this
   fixture](https://github.com/thlorenz/browserify-shim/blob/master/test/fixtures/shims/lib-with-exports-define-global-problem.js)
 
+
+Since `browserify-shim` is a proper `browserify` transform you can publish packages with files that need to be shimmed,
+granted that you specify the shim config inside the `package.json`.
+
+When `browserify` resolves your package it will run the `browserify-shim` transform and thus shim what's necessary
+when generating the bundle.
+
 ## API
 
-`shim(browserifyInstance, shimconfig)` returns the `browserifyInstance` to allow chaining.
+### You Will Always
 
-The browserify instance is created via `browserify([opts])`
+#### 1. Install browserify-shim dependency
 
-The shimConfig is a hashmap of modules to be shimmed. Each has the following structure:
-  
-`alias: { path: 'path/to/file.js', exports: 'name' }`
+In most cases you want to install it as a [devDependency](https://npmjs.org/doc/json.html#devDependencies) via:
 
-- `alias` the name under which you want to require the module (i.e. `jquery`)
-- `path` relative to your build script or a full path
-- `exports` the name under which the module attaches itself to the window or its execution context (i.e. `$`)
+    npm install -D browserify-shim
 
-If exports is null, the script will just execute when required, however you don't need browserify-shim for this feature
-anymore. Instead use the `expose` option in your `browserify.require`.
-For more information look at the [shim-underscore example](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-underscore).
+#### 2. Register browserify-shim as a transform with browserify
 
-### Multi Shim Example
+Inside `package.json` add:
 
-```js
-shim(browserify(), {
-    jquery:     { path: './js/vendor/jquery.js', exports: '$' }
-  , d3:         { path: './js/vendor/d3.js', exports: 'd3' }
-})
-.require(require.resolve('./js/entry.js'), { entry: true })
-.bundle(function (err, src) {
-  [..]
-})
+```json
+{ 
+  "browserify": {
+    "transform": [ "browserify-shim" ]
+  }
+}
 ```
 
+#### 3. Provide browserify-shim config
 
-### Dependents
+Inside `package.json` add:
+
+```json
+{
+  "browserify-shim": {
+    "./js/vendor/jquery.js": "$"
+  }
+}
+```
+
+The above includes `./js/vendor/jquery.js` (relative to the `package.json`) in the bundle and exports `window.$`.
+
+##### Short Form vs. Long Form config
+
+Since `jquery` does not depend on other shimmed modules and thus has no `depends` field, we used the short form to
+specify its exports, however the example above is equivalent to:
+
+```json
+{
+  "browserify-shim": {
+    "./js/vendor/jquery.js": { "exports": "$" }
+  }
+}
+```
+
+### You will sometimes
+
+#### Use aliases
+
+You may expose files under a different name via the [`browser` field](https://gist.github.com/defunctzombie/4339901#replace-specific-files---advanced) and refer to them under that alias in the shim config:
+
+```json
+{
+  "browser": {
+    "jquery": "./js/vendor/jquery.js"
+  },
+  "browserify-shim": {
+    "jquery": "$"
+  }
+}
+```
+
+This also allows you to require this module under the alias, i.e.: `var $ = require('jquery')`.
+
+#### Provide an external shim config
+
+```json
+"browserify-shim": "./config/shim.js"
+```
+
+The external shim format is very similar to the way in which the shim is specified inside the `package.json`. See
+[below](#c-config-inside-configshimjs-without-aliases) for more details.
+
+#### Diagnose what browserify-shim is doing
+
+You may encounter problems when your shim config isn't properly setup. In that case you can diagnose them via the
+`BROWSERIFYSHIM_DIAGNOSTICS` flag.
+
+Simply set the flag when building your bundle, i.e.: 
+
+    BROWSERIFYSHIM_DIAGNOSTICS=1 browserify -d . -o js/bundle.js
+
+or in a `build.js` script add: `process.env.BROWSERIFYSHIM_DIAGNOSTICS=1` to the top.
+
+## Multi Shim Example including dependencies
 
 Some libraries depend on other libraries to have attached their exports to the window for historical reasons :(.
 (Hopefully soon we can truly say that this bad design is history.)
 
-As an example, [backbone.stickit](http://nytimes.github.com/backbone.stickit/) depends on Backbone, underscore.js,
-and jQuery or Zepto.
+In this contrived example we are shimming four libraries since none of them are commonJS compatible:
 
-We would properly declare its dependents when shimming it as follows:
+- **x** exports **window.$**
+- **x-ui** exports nothing since it just **attaches itself to x**. Therefore x-ui depends on x.
+- **y** exports **window.Y** and also **depends on x** expecting to find it on the window as $.
+- **z** exports **window.zorro** and **depends on x and y**. It expects to find x on the window as $, but y on the window as YNOT, 
+which is actually different than the name under which y exports itself.
 
-```js
-shim(browserify(), {
-    jquery: { path: './js/vendor/jquery.js',  exports: '$' }
-  , 'backbone.stickit': {
-      , path: './js/vendor/backbone.stickit.js'
-      , exports: null
-        // Below we are declaring the dependencies and under what name/symbol 
-        // they are expected to be attached to the window.
-      , depends: { jquery: '$', underscore: '_', backbone: 'Backbone' }  
-    }
-  })
+We will be using the `depends` field in order to ensure that a dependency is included and initialized before a library
+that depends on it is initialized.
 
-  // Underscore and backbone are commonJS compatible, so a simple require with an `expose` option works.
-  // You don't even need this if they're in the usual node_modules directories, instead of `./js/vendor`.
-  .require(require.resolve('./js/vendor/underscore.js'), { expose: 'underscore' })
-  .require(require.resolve('./js/vendor/backbone.js'), { expose: 'backbone' })
+Below are three examples, each showing a way to properly shim the above mentioned modules.
 
-  .require(require.resolve('./js/entry.js'), { entry: true })
-  .bundle(function (err, src) {
-    if (err) return console.error(err);
+### a) Config inside `package.json` without aliases
 
-    fs.writeFileSync(builtFile, src);
-  });
+```json
+{
+  "browserify": {
+    "transform": [ "browserify-shim" ]
+  },
+  "browserify-shim": {
+    "./vendor/x"    :  "$",
+    "./vendor/x-ui" :  { "depends": [ "./vendor/x" ] },
+    "./vendor/y"    :  { "exports": "Y", "depends": [ "./vendor/x:$" ] },
+    "./vendor/z"    :  { "exports": "zorro", "depends": [ "./vendor/x:$", "./vendor/y:YNOT" ] }
+  }
+}
 ```
 
-Given this configuration browserify-shim will attach `$`, `_` and `Backbone` to the window after requiring it, so that
-`backbone.stickit` can find them there.
+**Note:** the `depends` array consists of entries of the format `path-to-file:export`
 
-**Note:** the order of shim declarations doesn't matter, i.e. we could have shimmed `backbone.stickit` at the very top
-(before the libraries it depends on).
+### b) Config inside `package.json` with aliases
 
-## Examples
-The underscore example is only included for completeness. Since browserify v2.0, CommonJS-compatible modules don't need
-shimming anymore even if they reside in a folder other than `node_modules`.
+```json
+{
+  "browserify": {
+    "transform": [ "browserify-shim" ]
+  },
+  "browser": {
+    "x"    :  "vendor/x.js",
+    "x-ui" :  "vendor/x-ui.js",
+    "y"    :  "vendor/y.js",
+    "z"    :  "vendor/z.js"
+  },
+   "browserify-shim": {
+    "x"    :  "$",
+    "x-ui" :  { "depends": [ "x" ] },
+    "y"    :  { "exports": "Y", "depends": [ "x:$" ] },
+    "z"    :  { "exports": "zorro", "depends": [ "x:$", "y:YNOT" ] }
+  }
+}
+```
+
+**Note:** the `depends` entries make use of the aliases as well `alias:export`
+
+### c) Config inside `./config/shim.js` without aliases
+
+#### `package.json`
+
+```json
+{
+  "browserify": {
+    "transform": [ "browserify-shim" ]
+  },
+  "browserify-shim": "./config/shim.js"
+}
+```
+
+#### `shim.js`
+
+```js
+module.exports = {
+  '../vendor/x'    :  '$',
+  '../vendor/x-ui' :  { 'depends': { '../vendor/x': null } },
+  '../vendor/y'    :  { 'exports': 'Y', 'depends': { '../vendor/x': '$' } },
+  '../vendor/z'    :  { 'exports': 'zorro', 'depends': { '../vendor/x': '$', '../vendor/y': 'YNOT' } }
+}
+```
+
+**Note:** all paths are relative to `./config/shim.js` instead of the `package.json`.
+
+The main difference to `a)` is the `depends field specification. Instead it being an array of strings it expresses its dependencies as a hashmap:
+
+- **key:** `path-to-file` 
+- **value:**  the name under which it is expected to be attached on the window
+
+## More Examples
 
 - [shim-jquery](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery)
-- [shim-underscore](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-underscore)
-
+- [shim-jquery-external](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery-external)
+- the [tests](https://github.com/thlorenz/browserify-shim/tree/master/test) are a great resource to investigate the
+  different ways to configure shims and to understand how shims are applied to packages found inside the `node_modules`
+  of your package
