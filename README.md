@@ -151,7 +151,9 @@ This also allows you to require this module under the alias, i.e.: `var $ = requ
 #### Provide an external shim config
 
 ```json
-"browserify-shim": "./config/shim.js"
+{
+  "browserify-shim": "./config/shim.js"
+}
 ```
 
 The external shim format is very similar to the way in which the shim is specified inside the `package.json`. See
@@ -194,10 +196,10 @@ Below are three examples, each showing a way to properly shim the above mentione
     "transform": [ "browserify-shim" ]
   },
   "browserify-shim": {
-    "./vendor/x"    :  "$",
-    "./vendor/x-ui" :  { "depends": [ "./vendor/x" ] },
-    "./vendor/y"    :  { "exports": "Y", "depends": [ "./vendor/x:$" ] },
-    "./vendor/z"    :  { "exports": "zorro", "depends": [ "./vendor/x:$", "./vendor/y:YNOT" ] }
+    "./vendor/x.js"    :  "$",
+    "./vendor/x-ui.js" :  { "depends": [ "./vendor/x.js" ] },
+    "./vendor/y.js"    :  { "exports": "Y", "depends": [ "./vendor/x.js:$" ] },
+    "./vendor/z.js"    :  { "exports": "zorro", "depends": [ "./vendor/x.js:$", "./vendor/y.js:YNOT" ] }
   }
 }
 ```
@@ -212,10 +214,10 @@ Below are three examples, each showing a way to properly shim the above mentione
     "transform": [ "browserify-shim" ]
   },
   "browser": {
-    "x"    :  "vendor/x.js",
-    "x-ui" :  "vendor/x-ui.js",
-    "y"    :  "vendor/y.js",
-    "z"    :  "vendor/z.js"
+    "x"    :  "./vendor/x.js",
+    "x-ui" :  "./vendor/x-ui.js",
+    "y"    :  "./vendor/y.js",
+    "z"    :  "./vendor/z.js"
   },
    "browserify-shim": {
     "x"    :  "$",
@@ -245,16 +247,16 @@ Below are three examples, each showing a way to properly shim the above mentione
 
 ```js
 module.exports = {
-  '../vendor/x'    :  '$',
-  '../vendor/x-ui' :  { 'depends': { '../vendor/x': null } },
-  '../vendor/y'    :  { 'exports': 'Y', 'depends': { '../vendor/x': '$' } },
-  '../vendor/z'    :  { 'exports': 'zorro', 'depends': { '../vendor/x': '$', '../vendor/y': 'YNOT' } }
+  '../vendor/x.js'    :  '$',
+  '../vendor/x-ui.js' :  { 'depends': { '../vendor/x.js': null } },
+  '../vendor/y.js'    :  { 'exports': 'Y', 'depends': { '../vendor/x.js': '$' } },
+  '../vendor/z.js'    :  { 'exports': 'zorro', 'depends': { '../vendor/x.js': '$', '../vendor/y.js': 'YNOT' } }
 }
 ```
 
 **Note:** all paths are relative to `./config/shim.js` instead of the `package.json`.
 
-The main difference to `a)` is the `depends field specification. Instead it being an array of strings it expresses its dependencies as a hashmap:
+The main difference to `a)` is the `depends` field specification. Instead it being an array of strings it expresses its dependencies as a hashmap:
 
 - **key:** `path-to-file` 
 - **value:**  the name under which it is expected to be attached on the window
