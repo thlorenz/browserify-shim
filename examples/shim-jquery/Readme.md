@@ -27,14 +27,14 @@ Given this config you can build the bundle via:
 
     browserify -d . > js/bundle.js
 
-demonstrated [here](https://github.com/thlorenz/browserify-shim/blob/v3/examples/shim-jquery/cli.sh).
+demonstrated [here](https://github.com/thlorenz/browserify-shim/blob/master/examples/shim-jquery/cli.sh).
 
 If you want to turn on browserify shim diagnostics messages set the `BROWSERIFYSHIM_DIAGNOSTICS` environment variable
 when bundling i.e.:
 
     BROWSERIFYSHIM_DIAGNOSTICS=1 browserify -d . > js/bundle.js
 
-demonstrated [here](https://github.com/thlorenz/browserify-shim/blob/v3/examples/shim-jquery/cli-diag.sh).
+demonstrated [here](https://github.com/thlorenz/browserify-shim/blob/master/examples/shim-jquery/cli-diag.sh).
 
 **Note** that in both cases the `-d` flag is added as well in order to turn on browserify sourcemaps.  
 
@@ -53,7 +53,7 @@ Alternatively you can write a short `build.js` to perform the bundling step:
     .pipe(fs.createWriteStream(path.join(__dirname, 'js', 'bundle.js'), 'utf8'))
 ```
 
-demonstrated [here](https://github.com/thlorenz/browserify-shim/blob/v3/examples/shim-jquery/build.js).
+demonstrated [here](https://github.com/thlorenz/browserify-shim/blob/master/examples/shim-jquery/build.js).
 
 To run this example:
 

@@ -19,7 +19,7 @@ however in this case it **does not include the shim config**:
 }
 ```
 
-As you can see the `browserify-shim` field points to the [external shim file](https://github.com/thlorenz/browserify-shim/blob/v3/examples/shim-jquery-external/config/shim.js):
+As you can see the `browserify-shim` field points to the [external shim file](https://github.com/thlorenz/browserify-shim/blob/master/examples/shim-jquery-external/config/shim.js):
 
 ```js
 module.exports = {
@@ -28,15 +28,15 @@ module.exports = {
 ```
 
 **Note**: we didn't expose `./js/vendor/jquery.js` as `jquery` like we did in the [other jquery
-example](https://github.com/thlorenz/browserify-shim/tree/v3/examples/shim-jquery). Instead our config spells out the
+example](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery). Instead our config spells out the
 path to `./js/vendor/jquery.js` relative to the `shim.js` file.
 
-As a result we also cannot just `require('jquery')` in our [entry.js](https://github.com/thlorenz/browserify-shim/blob/v3/examples/shim-jquery-external/js/entry.js#L1), but have to spell out the relative path here as well, i.e. 
+As a result we also cannot just `require('jquery')` in our [entry.js](https://github.com/thlorenz/browserify-shim/blob/master/examples/shim-jquery-external/js/entry.js#L1), but have to spell out the relative path here as well, i.e. 
 `var $ = require('./vendor/jquery')`.
 
 ### Bundling
 
-As explained in the [shim-jquery example](https://github.com/thlorenz/browserify-shim/tree/v3/examples/shim-jquery)
+As explained in the [shim-jquery example](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery)
 there are multiple ways to produce the bundle.
 
     browserify -d . > js/bundle.js
