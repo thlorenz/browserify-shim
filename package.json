@@ -28,12 +28,12 @@
     "tap": "~0.3.3",
     "request": "~2.12.0",
     "jsdom": "~0.7.0",
-    "browserify": "~2.35.2"
+    "browserify": "~3.0.0"
   },
   "dependencies": {
     "through": "~2.3.4"
   },
   "peerDependencies": {
-    "browserify": ">= 2.3.0 < 3"
+    "browserify": ">= 2.3.0 < 4"
   }
 }
