@@ -1,6 +1,7 @@
 'use strict';
 
 var util         =  require('util')
+  , resolve      =  require('resolve')
   , format       =  require('util').format
   , path         =  require('path')
   , through      =  require('through')
@@ -8,7 +9,7 @@ var util         =  require('util')
   , debug        =  require('./lib/debug')
   ;
 
-function requireDependencies(depends, packageRoot, browserAliases) {
+function requireDependencies(depends, packageRoot, browserAliases, dependencies) {
   if (!depends) return '';
 
   return Object.keys(depends)
@@ -16,8 +17,20 @@ function requireDependencies(depends, packageRoot, browserAliases) {
       // resolve aliases to full paths to avoid conflicts when require is injected into a file
       // inside another package, i.e. the it's shim was defined in a package.json one level higher
       // aliases don't get resolved by browserify in that case, since it only looks in the package.json next to it
-      var browserAlias = browserAliases && browserAliases[k];
-      var alias =  browserAlias ? path.resolve(packageRoot, browserAlias) : k;
+      var browserAlias = browserAliases && browserAliases[k]
+        , dependency = dependencies && dependencies[k];
+      
+      // prefer browser aliases defined explicitly
+      var alias =  browserAlias 
+        ? path.resolve(packageRoot, browserAlias) 
+
+        // but also consider dependencies installed in the package in which shims were defined
+        : dependency 
+          ? resolve.sync(k, { basedir: packageRoot }) 
+
+          // lets hope for the best that browserify will be able to resolve this, cause we can't
+          : k;
+
       return { alias: alias, exports: depends[k] || null }; 
     })
     .reduce(
