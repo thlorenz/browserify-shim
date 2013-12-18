@@ -12,16 +12,17 @@ var util         =  require('util')
 function requireDependencies(depends, packageRoot, browserAliases, dependencies) {
   if (!depends) return '';
 
-  return Object.keys(depends)
-    .map(function (k) { 
-      // resolve aliases to full paths to avoid conflicts when require is injected into a file
-      // inside another package, i.e. the it's shim was defined in a package.json one level higher
-      // aliases don't get resolved by browserify in that case, since it only looks in the package.json next to it
-      var browserAlias = browserAliases && browserAliases[k]
-        , dependency = dependencies && dependencies[k];
-      
+  function customResolve (k) { 
+    // resolve aliases to full paths to avoid conflicts when require is injected into a file
+    // inside another package, i.e. the it's shim was defined in a package.json one level higher
+    // aliases don't get resolved by browserify in that case, since it only looks in the package.json next to it
+    var browserAlias = browserAliases && browserAliases[k]
+      , dependency = dependencies && dependencies[k]
+      , alias;
+    
+    try {
       // prefer browser aliases defined explicitly
-      var alias =  browserAlias 
+      alias =  browserAlias 
         ? path.resolve(packageRoot, browserAlias) 
 
         // but also consider dependencies installed in the package in which shims were defined
@@ -30,18 +31,30 @@ function requireDependencies(depends, packageRoot, browserAliases, dependencies)
 
           // lets hope for the best that browserify will be able to resolve this, cause we can't
           : k;
+    } catch (err) {
+      // resolve.sync may fail, in which case we give up and hope browserify can figure it out
+      alias = k;
+    }
 
-      return { alias: alias, exports: depends[k] || null }; 
-    })
+    return { alias: alias, exports: depends[k] || null }; 
+  }
+
+  function noResolve(k) { 
+    return { alias: k, exports: depends[k] || null };
+  }
+
+  return Object.keys(depends)
+
+    // if the package was looked up from the parent of its enclosing package we need to pre-resolve the depends
+    .map(customResolve)
     .reduce(
       function (acc, dep) {
         return dep.exports 
           // Example: jQuery = global.jQuery = require("jquery");
-          // the scoped dangling variable is needed cause some libs reference it as such and it breaks outside of the browser,
+          // the global dangling variable is needed cause some libs reference it as such and it breaks outside of the browser,
           // i.e.: (function ($) { ... })( jQuery )
-          // This little extra makes it work everywhere and it won't leak outside of the function
-          // Additionally since it's on top, it will be shadowed by any other definitions with the same name that follow, so
-          // it doesn't conflict with anything.
+          // This little extra makes it work everywhere and since it's on top, it will be shadowed by any other definitions 
+          // so it doesn't conflict with anything.
           ? acc + dep.exports + ' = global.' + dep.exports + ' = require("' + dep.alias + '");\n'
           : acc + 'require("' + dep.alias + '");\n';
       }
@@ -102,8 +115,7 @@ module.exports = function (file) {
       debug('');
       debug.inspect({ file: file, info: info, messages: messages });
 
-      var packageRoot = path.dirname(info.package_json);
-      var transformed = info.shim ? wrap(content, info.shim, packageRoot, info.browser) : content;
+      var transformed = info.shim ? wrap(content, info.shim, info.packageDir, info.browser) : content;
 
       stream.queue(transformed);
       stream.queue(null);
