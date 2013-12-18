@@ -2,13 +2,16 @@
 
 $.ui = $.ui || {};
 
-$.position = {
+$.position = function () {
+  return '$.position';
 };
 
 $.fn.position = function( options ) {
+  return '$.fn.position';
 };
 
-$.ui.position = {
+$.ui.position = function () {
+  return '$.ui.position';
 };
 
 }( jQuery ) );

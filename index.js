@@ -2,20 +2,34 @@
 
 var util         =  require('util')
   , format       =  require('util').format
+  , path         =  require('path')
   , through      =  require('through')
   , resolveShims =  require('./lib/resolve-shims')
   , debug        =  require('./lib/debug')
   ;
 
-function requireDependencies(depends) {
+function requireDependencies(depends, packageRoot, browserAliases) {
   if (!depends) return '';
 
   return Object.keys(depends)
-    .map(function (k) { return { alias: k, exports: depends[k] || null }; })
+    .map(function (k) { 
+      // resolve aliases to full paths to avoid conflicts when require is injected into a file
+      // inside another package, i.e. the it's shim was defined in a package.json one level higher
+      // aliases don't get resolved by browserify in that case, since it only looks in the package.json next to it
+      var browserAlias = browserAliases && browserAliases[k];
+      var alias =  browserAlias ? path.resolve(packageRoot, browserAlias) : k;
+      return { alias: alias, exports: depends[k] || null }; 
+    })
     .reduce(
       function (acc, dep) {
         return dep.exports 
-          ? acc + 'global.' + dep.exports + ' = require("' + dep.alias + '");\n'
+          // Example: jQuery = global.jQuery = require("jquery");
+          // the scoped dangling variable is needed cause some libs reference it as such and it breaks outside of the browser,
+          // i.e.: (function ($) { ... })( jQuery )
+          // This little extra makes it work everywhere and it won't leak outside of the function
+          // Additionally since it's on top, it will be shadowed by any other definitions with the same name that follow, so
+          // it doesn't conflict with anything.
+          ? acc + dep.exports + ' = global.' + dep.exports + ' = require("' + dep.alias + '");\n'
           : acc + 'require("' + dep.alias + '");\n';
       }
     , '\n; '
@@ -46,11 +60,11 @@ function moduleExport(exp) {
   return format('\n; browserify_shim__define__module__export__(typeof %s != "undefined" ? %s : window.%s);\n', exp, exp, exp);
 }
 
-function wrap(content, config) {
+function wrap(content, config, packageRoot, browserAliases) {
   var exported = config.exports
       ? content + moduleExport(config.exports)
       : content
-  , dependencies = requireDependencies(config.depends)
+  , dependencies = requireDependencies(config.depends, packageRoot, browserAliases)
   , boundWindow = config.exports
       ? bindWindowWithExports(exported, dependencies)
       : bindWindowWithoutExports(exported, dependencies);
@@ -75,7 +89,8 @@ module.exports = function (file) {
       debug('');
       debug.inspect({ file: file, info: info, messages: messages });
 
-      var transformed = info.shim ? wrap(content, info.shim) : content;
+      var packageRoot = path.dirname(info.package_json);
+      var transformed = info.shim ? wrap(content, info.shim, packageRoot, info.browser) : content;
 
       stream.queue(transformed);
       stream.queue(null);
