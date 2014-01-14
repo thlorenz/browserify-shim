@@ -49,14 +49,15 @@ function requireDependencies(depends, packageRoot, browserAliases, dependencies)
     .map(customResolve)
     .reduce(
       function (acc, dep) {
+        var alias = dep.alias.replace(/\\/g, "\\\\");
         return dep.exports 
           // Example: jQuery = global.jQuery = require("jquery");
           // the global dangling variable is needed cause some libs reference it as such and it breaks outside of the browser,
           // i.e.: (function ($) { ... })( jQuery )
           // This little extra makes it work everywhere and since it's on top, it will be shadowed by any other definitions 
           // so it doesn't conflict with anything.
-          ? acc + dep.exports + ' = global.' + dep.exports + ' = require("' + dep.alias + '");\n'
-          : acc + 'require("' + dep.alias + '");\n';
+          ? acc + dep.exports + ' = global.' + dep.exports + ' = require("' + alias + '");\n'
+          : acc + 'require("' + alias + '");\n';
       }
     , '\n; '
   );
