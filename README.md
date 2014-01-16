@@ -199,7 +199,7 @@ Below are three examples, each showing a way to properly shim the above mentione
   },
   "browserify-shim": {
     "./vendor/x.js"    :  "$",
-    "./vendor/x-ui.js" :  { "depends": [ "./vendor/x.js" ] },
+    "./vendor/x-ui.js" :  { "exports": null, "depends": [ "./vendor/x.js" ] },
     "./vendor/y.js"    :  { "exports": "Y", "depends": [ "./vendor/x.js:$" ] },
     "./vendor/z.js"    :  { "exports": "zorro", "depends": [ "./vendor/x.js:$", "./vendor/y.js:YNOT" ] }
   }
@@ -223,7 +223,7 @@ Below are three examples, each showing a way to properly shim the above mentione
   },
    "browserify-shim": {
     "x"    :  "$",
-    "x-ui" :  { "depends": [ "x" ] },
+    "x-ui" :  { "exports": null, depends": [ "x" ] },
     "y"    :  { "exports": "Y", "depends": [ "x:$" ] },
     "z"    :  { "exports": "zorro", "depends": [ "x:$", "y:YNOT" ] }
   }
@@ -250,7 +250,7 @@ Below are three examples, each showing a way to properly shim the above mentione
 ```js
 module.exports = {
   '../vendor/x.js'    :  '$',
-  '../vendor/x-ui.js' :  { 'depends': { '../vendor/x.js': null } },
+  '../vendor/x-ui.js' :  { 'exports': null, 'depends': { '../vendor/x.js': null } },
   '../vendor/y.js'    :  { 'exports': 'Y', 'depends': { '../vendor/x.js': '$' } },
   '../vendor/z.js'    :  { 'exports': 'zorro', 'depends': { '../vendor/x.js': '$', '../vendor/y.js': 'YNOT' } }
 }
