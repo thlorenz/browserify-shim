@@ -1,0 +1,12 @@
+{
+  "main": "./main.js",
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "./vendor/non-cjs.js": "noncjs",
+    "jquery": "global:$"
+  }
+}

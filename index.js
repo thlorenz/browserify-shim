@@ -2,6 +2,7 @@
 
 var util         =  require('util')
   , resolve      =  require('resolve')
+  , exposify     =  require('exposify')
   , format       =  require('util').format
   , path         =  require('path')
   , through      =  require('through')
@@ -115,6 +116,11 @@ module.exports = function (file) {
 
       debug('');
       debug.inspect({ file: file, info: info, messages: messages });
+
+      var eg = info.exposeGlobals;
+      if(eg && Object.keys(eg)) {
+        content = exposify.expose(eg, content);
+      }
 
       var transformed = info.shim ? wrap(content, info.shim, info.packageDir, info.browser) : content;
 

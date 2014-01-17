@@ -1,6 +1,8 @@
 'use strict';
 /*jshint asi: true */
 
+process.env.BROWSERIFYSHIM_DIAGNOSTICS=1
+
 var test = require('tap').test
 var path = require('path');
 var resolve = require('../lib/resolve-shims');
@@ -90,6 +92,24 @@ test('\nnon-cjs-dep depends on non-cjs and non-cjs-core, inline shims, all expos
       , { exports: 'noncjsdep', depends: depends }
       , 'resolves noncjsdep shim correctly'
     )
+    t.end();
+  });
+})
+
+test('\nno dependencies, inline shims, no expose, $ exposified as jquery', function (t) {
+  resolve(require.resolve('./exposify/inlineshim/vendor/non-cjs'), msgs, function (err, res) {
+    if (err) { t.fail(err); return t.end(); }
+    t.deepEqual(res.shim, { exports: 'noncjs', depends: undefined }, 'resolves noncjs shim correctly')
+    t.deepEqual(res.exposeGlobals, { jquery: '$' }, 'resolves expose globals correctly')
+    t.end();
+  });
+})
+
+test('\nno dependencies, external shims, no expose, $ exposified as jquery', function (t) {
+  resolve(require.resolve('./exposify/extshim/vendor/non-cjs'), msgs, function (err, res) {
+    if (err) { t.fail(err); return t.end(); }
+    t.deepEqual(res.shim, { exports: 'noncjs', depends: undefined }, 'resolves noncjs shim correctly')
+    t.deepEqual(res.exposeGlobals, { jquery: '$' }, 'resolves expose globals correctly')
     t.end();
   });
 })
