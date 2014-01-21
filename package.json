@@ -6,7 +6,9 @@
   "scripts": {
     "test": "tap test/*.js && tap test/shim/*.js",
     "shim-jquery": "npm install opener && cd ./examples/shim-jquery && npm install && node build.js && opener index.html",
-    "shim-jquery-diag": "npm install opener && cd ./examples/shim-jquery && npm install && node build-diag.js && opener index.html"
+    "shim-jquery-diag": "npm install opener && cd ./examples/shim-jquery && npm install && node build-diag.js && opener index.html",
+    "expose-jquery": "npm install opener && cd ./examples/expose-jquery && npm install && node build.js && opener index.html",
+    "expose-jquery-diag": "npm install opener && cd ./examples/expose-jquery && npm install && node build-diag.js && opener index.html"
   },
   "repository": {
     "type": "git",

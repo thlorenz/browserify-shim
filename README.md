@@ -13,13 +13,14 @@
     "jquery": "./js/vendor/jquery.js"
   },
   "browserify-shim": {
-    "jquery": "$"
+    "jquery": "$",
+    "three": "global:THREE"
   },
   "browserify": {
     "transform": [ "browserify-shim" ]
   },
   "dependencies": {
-    "browserify-shim": "~3.0.0"
+    "browserify-shim": "~3.2.0"
   }
 }
 ```
@@ -33,20 +34,25 @@
 - [Features](#features)
 - [API](#api)
   - [You Will Always](#you-will-always)
-      - [1. Install browserify-shim dependency](#1-install-browserify-shim-dependency)
-      - [2. Register browserify-shim as a transform with browserify](#2-register-browserify-shim-as-a-transform-with-browserify)
-      - [3. Provide browserify-shim config](#3-provide-browserify-shim-config)
-          - [Short Form vs. Long Form config](#short-form-vs-long-form-config)
+    - [1. Install browserify-shim dependency](#1-install-browserify-shim-dependency)
+    - [2. Register browserify-shim as a transform with browserify](#2-register-browserify-shim-as-a-transform-with-browserify)
+    - [3. Provide browserify-shim config](#3-provide-browserify-shim-config)
+      - [Short Form vs. Long Form config](#short-form-vs-long-form-config)
   - [You will sometimes](#you-will-sometimes)
-      - [Use aliases](#use-aliases)
-      - [Provide an external shim config](#provide-an-external-shim-config)
-      - [Diagnose what browserify-shim is doing](#diagnose-what-browserify-shim-is-doing)
+    - [a) Expose global variables via `global:*`](#a-expose-global-variables-via-global)
+      - [1. add script tag for library you want to expose](#1-add-script-tag-for-library-you-want-to-expose)
+      - [2. Add expose global config to `package.json`](#2-add-expose-global-config-to-packagejson)
+      - [3. Require library by the name it was exposed as](#3-require-library-by-the-name-it-was-exposed-as)
+      - [Why not just `var THREE = window.THREE`?](#why-not-just-var-three-=-windowthree)
+    - [b) Use aliases](#b-use-aliases)
+    - [c) Provide an external shim config](#c-provide-an-external-shim-config)
+    - [d) Diagnose what browserify-shim is doing](#d-diagnose-what-browserify-shim-is-doing)
 - [Multi Shim Example including dependencies](#multi-shim-example-including-dependencies)
   - [a) Config inside `package.json` without aliases](#a-config-inside-packagejson-without-aliases)
   - [b) Config inside `package.json` with aliases](#b-config-inside-packagejson-with-aliases)
   - [c) Config inside `./config/shim.js` without aliases](#c-config-inside-configshimjs-without-aliases)
-      - [`package.json`](#packagejson)
-      - [`shim.js`](#shimjs)
+    - [`package.json`](#packagejson)
+    - [`shim.js`](#shimjs)
 - [More Examples](#more-examples)
 
 ## Installation
@@ -111,12 +117,16 @@ Inside `package.json` add:
 ```json
 {
   "browserify-shim": {
-    "./js/vendor/jquery.js": "$"
+    "./js/vendor/jquery.js": "$",
+    "three": "global:THREE"
   }
 }
 ```
 
 The above includes `./js/vendor/jquery.js` (relative to the `package.json`) in the bundle and exports `window.$`.
+
+Additionally it exposes `window.THREE` as `three`, so you can `var three = require('three')`. More info
+[below](#a-expose-global-variables-via-global).
 
 ##### Short Form vs. Long Form config
 
@@ -133,7 +143,53 @@ specify its exports, however the example above is equivalent to:
 
 ### You will sometimes
 
-#### Use aliases
+#### a) Expose global variables via `global:*`
+
+In some cases the libraries you are using are very large and you'd prefer to add them via a script tag instead to get
+the following benefits:
+
+- faster bundling times since the library is not included in the bundle
+- pull libraries from a [CDN](http://en.wikipedia.org/wiki/Content_delivery_network) which allows it to be pulled
+  straight from the user's browser cache in case it was downloaded before
+
+We'll show how this works by taking the rather huge yet awesome `THREE.js` library as an example:
+
+##### 1. add script tag for library you want to expose
+
+```html
+<!-- index.html -->
+<head>
+  <meta charset=utf-8 />
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r61/three.min.js"></script>
+</head>
+```
+
+##### 2. Add expose global config to `package.json`
+
+```json
+{
+  "browserify-shim": {
+    "three": "global:THREE"
+  }
+}
+```
+
+**Note:** `THREE.js` attaches `window.THREE`.
+
+##### 3. Require library by the name it was exposed as
+
+```js
+var THREE = require('three');
+```
+
+##### Why not just `var THREE = window.THREE`?
+
+You want to avoid spreading the knowledge that `THREE` is a global and stay consistent in how you resolve dependencies.
+Additionally if `THREE` would ever be published to [npm](https://npmjs.org/) and you decide to install it from there,
+you don't have to change any of your code since it already is `require`ing it properly.
+
+
+#### b) Use aliases
 
 You may expose files under a different name via the [`browser` field](https://gist.github.com/defunctzombie/4339901#replace-specific-files---advanced) and refer to them under that alias in the shim config:
 
@@ -150,7 +206,7 @@ You may expose files under a different name via the [`browser` field](https://gi
 
 This also allows you to require this module under the alias, i.e.: `var $ = require('jquery')`.
 
-#### Provide an external shim config
+#### c) Provide an external shim config
 
 ```json
 {
@@ -161,7 +217,7 @@ This also allows you to require this module under the alias, i.e.: `var $ = requ
 The external shim format is very similar to the way in which the shim is specified inside the `package.json`. See
 [below](#c-config-inside-configshimjs-without-aliases) for more details.
 
-#### Diagnose what browserify-shim is doing
+#### d) Diagnose what browserify-shim is doing
 
 You may encounter problems when your shim config isn't properly setup. In that case you can diagnose them via the
 `BROWSERIFYSHIM_DIAGNOSTICS` flag.
@@ -266,6 +322,7 @@ The main difference to `a)` is the `depends` field specification. Instead it bei
 ## More Examples
 
 - [shim-jquery](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery)
+- [expose-jquery](https://github.com/thlorenz/browserify-expose/tree/master/examples/expose-jquery)
 - [shim-jquery-external](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery-external)
 - the [tests](https://github.com/thlorenz/browserify-shim/tree/master/test) are a great resource to investigate the
   different ways to configure shims and to understand how shims are applied to packages found inside the `node_modules`
