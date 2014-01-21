@@ -322,7 +322,7 @@ The main difference to `a)` is the `depends` field specification. Instead it bei
 ## More Examples
 
 - [shim-jquery](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery)
-- [expose-jquery](https://github.com/thlorenz/browserify-expose/tree/master/examples/expose-jquery)
+- [expose-jquery](https://github.com/thlorenz/browserify-shim/tree/master/examples/expose-jquery)
 - [shim-jquery-external](https://github.com/thlorenz/browserify-shim/tree/master/examples/shim-jquery-external)
 - the [tests](https://github.com/thlorenz/browserify-shim/tree/master/test) are a great resource to investigate the
   different ways to configure shims and to understand how shims are applied to packages found inside the `node_modules`
