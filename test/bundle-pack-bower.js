@@ -1,6 +1,8 @@
 'use strict';
 /*jshint asi: true */
 
+process.env.BROWSERIFYSHIM_DIAGNOSTICS=1;
+
 var browserify = require('browserify')
   , test = require('tap').test
   , path = require('path')
@@ -15,7 +17,7 @@ function bundleNcheck(relPath, t) {
     if (err) { t.fail(err); return t.end(); }
     
     browserify( { ignoreGlobals: true })
-      .require(require.resolve(relPath))
+      .require(require.resolve(relPathCpy))
       .bundle(function (err, src) {
         rmrf.sync(path.join(__dirname, relPathCpy));
 
@@ -25,7 +27,7 @@ function bundleNcheck(relPath, t) {
         ctx.self = ctx.window;
         var require_ = vm.runInNewContext(src, ctx);
         
-        var main = require_(require.resolve(relPath));
+        var main = require_(require.resolve(relPathCpy));
 
         t.deepEqual(
             main

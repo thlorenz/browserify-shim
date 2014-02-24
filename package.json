@@ -40,7 +40,10 @@
     "through": "~2.3.4",
     "find-parent-dir": "~0.1.0",
     "resolve": "~0.6.1",
-    "exposify": "~0.1.2"
+    "exposify": "~0.1.2",
+    "readdirp": "~0.3.3",
+    "through2": "~0.4.1",
+    "mothership": "~0.1.0"
   },
   "peerDependencies": {
     "browserify": ">= 2.3.0 < 4"
