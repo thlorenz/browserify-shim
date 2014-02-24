@@ -12,6 +12,7 @@
     "ui-position": "./components/jquery-ui/ui/jquery.ui.position.js"
   },
   "browserify-shim": {
+    "@fixPackages": "./components",
     "jquery": "$",
     "ui-position": { "depends": [ "jquery:jQuery" ] }
   }
