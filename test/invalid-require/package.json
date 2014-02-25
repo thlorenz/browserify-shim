@@ -1,0 +1,14 @@
+{
+  "main": "./main.js",
+  "browser": {
+    "non-cjs": "./non-cjs.js"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "non-cjs": "Ember"
+  }
+}

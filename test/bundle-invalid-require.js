@@ -1,6 +1,8 @@
 'use strict';
 /*jshint asi: true */
 
+process.env.BROWSERIFYSHIM_DIAGNOSTICS=1;
+
 var browserify = require('browserify')
   , test = require('tap').test
   , vm = require('vm')
@@ -20,10 +22,10 @@ function bundleNcheck(relPath, t) {
       var require_ = vm.runInNewContext(src, ctx);
        
       var main = require_(require.resolve(relPath));
-      t.equal(main, 'I survived the horror of humans messing with my brain', 'shims that module just fine');
+      t.equal(main(), 'I survived the horror of humans messing with my brain', 'shims that module just fine');
       t.end()
     });
 }
 
-test('\nshimming a module that has an invalid require that needs to be derequired'
-    , bundleNcheck.bind(null, './derequire/main'))
+test('\nshimming a module that has an invalid require that needs to be renamed' 
+    , bundleNcheck.bind(null, './invalid-require/main'))

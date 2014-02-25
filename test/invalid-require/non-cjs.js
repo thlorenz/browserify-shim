@@ -9,5 +9,4 @@ if (!jQuery && typeof require === 'function') {
   // browserify will try to find 'jQuery' now, so we have to derequire it
   jQuery = require('jquery');
 }
-
-module.exports = 'I survived the horror of humans messing with my brain';
+window.Ember = 'I survived the horror of humans messing with my brain';
