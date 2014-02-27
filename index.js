@@ -10,6 +10,8 @@ var util         =  require('util')
   , rename       =  require('rename-function-calls')
   , debug        =  require('./lib/debug')
 
+var shimRequire = '__browserify_shim_require__';
+
 function requireDependencies(depends, packageRoot, browserAliases, dependencies) {
   if (!depends) return '';
 
@@ -77,6 +79,14 @@ function bindWindowWithExports(s, dependencies) {
    *    -- our deps (which still have access to require)
    *    jquery = global.jquery = require("/full/path/to/jquery.js");
    *
+   *    -- assigning shimmed require to actual require
+   *    -- this shouldn't matter, but would fix cases where libraries reach __browserify_shim_require__(x) as long 
+   *    -- as x was included in the bundle
+   *
+   *    __browserify_shim_require__=require;
+   *
+   *    -- also it won't hurt anything
+   *
    *    -- browserify-shim wrapper
    *    (function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) { 
    *       -- inside this function neither module, exports, require, or define are defined
@@ -113,6 +123,7 @@ function bindWindowWithExports(s, dependencies) {
   // The fact that __browserify_shim_removed_require__ is not defined doesn't matter since we never enter that block.
 
   return dependencies
+      + ';' + shimRequire + '=require;' 
       + '(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {\n'
       + s 
       + '\n}).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });\n';
@@ -123,6 +134,7 @@ function bindWindowWithoutExports(s, dependencies) {
   // therefore it is not a good idea to override the module here, however we need to still disable require
   // all else is similar to @see bindWindowWithExports
   return dependencies
+      + ';' + shimRequire + '=require;' 
       + '(function browserifyShim(module, define, require) {\n'
       + s 
       + '\n}).call(global, module, undefined, undefined);\n';
@@ -169,7 +181,7 @@ module.exports = function shim(file) {
       if (info.shim) { 
         
         // at this point we consider all remaining (not exposified) require statements to be invalid (why else are we shimming this)
-        content = rename('require', '__browserify_shim_removed_require__', content);
+        content = rename('require', shimRequire, content);
 
         var transformed = wrap(content, info.shim, info.packageDir, info.browser)
         stream.queue(transformed);
