@@ -27,33 +27,37 @@
 
     browserify . -d -o bundle.js
 
-
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
 - [Installation](#installation)
 - [Features](#features)
 - [API](#api)
-  - [You Will Always](#you-will-always)
-    - [1. Install browserify-shim dependency](#1-install-browserify-shim-dependency)
-    - [2. Register browserify-shim as a transform with browserify](#2-register-browserify-shim-as-a-transform-with-browserify)
-    - [3. Provide browserify-shim config](#3-provide-browserify-shim-config)
-      - [Short Form vs. Long Form config](#short-form-vs-long-form-config)
-  - [You will sometimes](#you-will-sometimes)
-    - [a) Expose global variables via `global:*`](#a-expose-global-variables-via-global)
-      - [1. add script tag for library you want to expose](#1-add-script-tag-for-library-you-want-to-expose)
-      - [2. Add expose global config to `package.json`](#2-add-expose-global-config-to-packagejson)
-      - [3. Require library by the name it was exposed as](#3-require-library-by-the-name-it-was-exposed-as)
-      - [Why not just `var THREE = window.THREE`?](#why-not-just-var-three-=-windowthree)
-    - [b) Use aliases](#b-use-aliases)
-    - [c) Provide an external shim config](#c-provide-an-external-shim-config)
-    - [d) Diagnose what browserify-shim is doing](#d-diagnose-what-browserify-shim-is-doing)
+	- [You Will Always](#you-will-always)
+		- [1. Install browserify-shim dependency](#1-install-browserify-shim-dependency)
+		- [2. Register browserify-shim as a transform with browserify](#2-register-browserify-shim-as-a-transform-with-browserify)
+		- [3. Provide browserify-shim config](#3-provide-browserify-shim-config)
+			- [Short Form vs. Long Form config](#short-form-vs-long-form-config)
+	- [You will sometimes](#you-will-sometimes)
+		- [a) Expose global variables via `global:*`](#a-expose-global-variables-via-global)
+			- [1. add script tag for library you want to expose](#1-add-script-tag-for-library-you-want-to-expose)
+			- [2. Add expose global config to `package.json`](#2-add-expose-global-config-to-packagejson)
+			- [2.a. Add expose global config to external shim config](#2a-add-expose-global-config-to-external-shim-config)
+			- [3. Require library by the name it was exposed as](#3-require-library-by-the-name-it-was-exposed-as)
+			- [Why not just `var THREE = window.THREE`?](#why-not-just-var-three-=-windowthree)
+		- [b) Use aliases](#b-use-aliases)
+		- [c) Provide an external shim config](#c-provide-an-external-shim-config)
+		- [d) Diagnose what browserify-shim is doing](#d-diagnose-what-browserify-shim-is-doing)
 - [Multi Shim Example including dependencies](#multi-shim-example-including-dependencies)
-  - [a) Config inside `package.json` without aliases](#a-config-inside-packagejson-without-aliases)
-  - [b) Config inside `package.json` with aliases](#b-config-inside-packagejson-with-aliases)
-  - [c) Config inside `./config/shim.js` without aliases](#c-config-inside-configshimjs-without-aliases)
-    - [`package.json`](#packagejson)
-    - [`shim.js`](#shimjs)
+	- [a) Config inside `package.json` without aliases](#a-config-inside-packagejson-without-aliases)
+	- [b) Config inside `package.json` with aliases](#b-config-inside-packagejson-with-aliases)
+	- [c) Config inside `./config/shim.js` without aliases](#c-config-inside-configshimjs-without-aliases)
+		- [`package.json`](#packagejson)
+		- [`shim.js`](#shimjs)
 - [More Examples](#more-examples)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Installation
 
@@ -174,6 +178,18 @@ We'll show how this works by taking the rather huge yet awesome `THREE.js` libra
   }
 }
 ```
+
+##### 2.a. Add expose global config to external shim config 
+
+In case you are using an extenal shim config, you may achieve the same by specifying the global via an `export`.
+
+```js
+module.exports = {
+  three.js': { exports: 'global:THREE' }
+}
+```
+
+[more about extenal configs here](#c-config-inside-configshimjs-without-aliases)
 
 **Note:** `THREE.js` attaches `window.THREE`.
 
