@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "through": "~2.3.4",
-    "find-parent-dir": "~0.1.0",
     "resolve": "~0.6.1",
     "exposify": "~0.1.2",
     "readdirp": "~0.3.3",
