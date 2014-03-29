@@ -28,22 +28,21 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "tap": "~0.3.3",
-    "request": "~2.12.0",
+    "browserify": "~3.38.0",
     "jsdom": "~0.7.0",
-    "proxyquire": "~0.5.1",
-    "browserify": "~3.0.0",
     "ncp": "~0.5.0",
-    "rimraf": "~2.2.6"
+    "proxyquire": "~0.5.1",
+    "request": "~2.12.0",
+    "rimraf": "~2.2.6",
+    "tap": "~0.3.3"
   },
   "dependencies": {
-    "through": "~2.3.4",
-    "resolve": "~0.6.1",
     "exposify": "~0.1.2",
+    "mothership": "~0.2.0",
     "readdirp": "~0.3.3",
-    "through2": "~0.4.1",
-    "mothership": "~0.1.0",
-    "rename-function-calls": "~0.1.0"
+    "rename-function-calls": "~0.1.0",
+    "resolve": "~0.6.1",
+    "through": "~2.3.4"
   },
   "peerDependencies": {
     "browserify": ">= 2.3.0 < 4"
