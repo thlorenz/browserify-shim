@@ -39,7 +39,6 @@
   "dependencies": {
     "exposify": "~0.1.2",
     "mothership": "~0.2.0",
-    "readdirp": "~0.3.3",
     "rename-function-calls": "~0.1.0",
     "resolve": "~0.6.1",
     "through": "~2.3.4"
