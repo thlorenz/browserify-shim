@@ -83,7 +83,7 @@ Additionally, it handles the following real-world edge cases:
 - Makes `define` and also `module` be `undefined`, in order to fix [improperly-authored
   libraries](https://github.com/mhemesath/r2d3/blob/918bd076e4f980722438b2594d1eba53a522ce75/r2d3.v2.js#L222) that need
   shimming but try anyway to use AMD or CommonJS. For more info read the comment inside [this
-  fixture](https://github.com/thlorenz/browserify-shim/blob/master/test/fixtures/shims/lib-with-exports-define-global-problem.js)
+  fixture](https://github.com/thlorenz/browserify-shim/blob/master/test/shim/fixtures/shims/lib-with-exports-define-global-problem.js)
 - removes invalid requires, i.e. `require('jquery')` although `'jquery'` isn't installed due to the library being
   improperly published or *installed* incorrectly via a downloader like [bower](http://bower.io/)
 
