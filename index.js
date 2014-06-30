@@ -15,22 +15,22 @@ var shimRequire = '__browserify_shim_require__';
 function requireDependencies(depends, packageRoot, browserAliases, dependencies) {
   if (!depends) return '';
 
-  function customResolve (k) { 
+  function customResolve (k) {
     // resolve aliases to full paths to avoid conflicts when require is injected into a file
     // inside another package, i.e. the it's shim was defined in a package.json one level higher
     // aliases don't get resolved by browserify in that case, since it only looks in the package.json next to it
     var browserAlias = browserAliases && browserAliases[k]
       , dependency = dependencies && dependencies[k]
       , alias;
-    
+
     try {
       // prefer browser aliases defined explicitly
-      alias =  browserAlias 
-        ? path.resolve(packageRoot, browserAlias) 
+      alias =  browserAlias
+        ? path.resolve(packageRoot, browserAlias)
 
         // but also consider dependencies installed in the package in which shims were defined
-        : dependency 
-          ? resolve.sync(k, { basedir: packageRoot }) 
+        : dependency
+          ? resolve.sync(k, { basedir: packageRoot })
 
           // lets hope for the best that browserify will be able to resolve this, cause we can't
           : k;
@@ -39,10 +39,10 @@ function requireDependencies(depends, packageRoot, browserAliases, dependencies)
       alias = k;
     }
 
-    return { alias: alias, exports: depends[k] || null }; 
+    return { alias: alias, exports: depends[k] || null };
   }
 
-  function noResolve(k) { 
+  function noResolve(k) {
     return { alias: k, exports: depends[k] || null };
   }
 
@@ -53,11 +53,11 @@ function requireDependencies(depends, packageRoot, browserAliases, dependencies)
     .reduce(
       function (acc, dep) {
         var alias = dep.alias.replace(/\\/g, "\\\\");
-        return dep.exports 
+        return dep.exports
           // Example: jQuery = global.jQuery = require("jquery");
           // the global dangling variable is needed cause some libs reference it as such and it breaks outside of the browser,
           // i.e.: (function ($) { ... })( jQuery )
-          // This little extra makes it work everywhere and since it's on top, it will be shadowed by any other definitions 
+          // This little extra makes it work everywhere and since it's on top, it will be shadowed by any other definitions
           // so it doesn't conflict with anything.
           ? acc + dep.exports + ' = global.' + dep.exports + ' = require("' + alias + '");\n'
           : acc + 'require("' + alias + '");\n';
@@ -69,18 +69,18 @@ function requireDependencies(depends, packageRoot, browserAliases, dependencies)
 function bindWindowWithExports(s, dependencies) {
   // purposely make module, exports, require and define be 'undefined',
   // but pass a function that allows exporting our dependency from the window or the context
-  
+
   // This results in code similarly to this example which shims ember which depends on jquery:
 
   /**
    * -- browserify wrapper
-   * function(require,module,exports){ 
+   * function(require,module,exports){
    *
    *    -- our deps (which still have access to require)
    *    jquery = global.jquery = require("/full/path/to/jquery.js");
    *
    *    -- assigning shimmed require to actual require
-   *    -- this shouldn't matter, but would fix cases where libraries reach __browserify_shim_require__(x) as long 
+   *    -- this shouldn't matter, but would fix cases where libraries reach __browserify_shim_require__(x) as long
    *    -- as x was included in the bundle
    *
    *    __browserify_shim_require__=require;
@@ -88,15 +88,15 @@ function bindWindowWithExports(s, dependencies) {
    *    -- also it won't hurt anything
    *
    *    -- browserify-shim wrapper
-   *    (function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) { 
+   *    (function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
    *       -- inside this function neither module, exports, require, or define are defined
    *
    *       -- browserify_shim__define__module__export__ allows exporting (since module and exports aren't available)
-   *       
+   *
    *       [..] -- code that needs shimming
    *
    *       -- exporting whatever ember attached to the window
-   *       ; browserify_shim__define__module__export__(typeof ember != "undefined" ? ember : window.ember); 
+   *       ; browserify_shim__define__module__export__(typeof ember != "undefined" ? ember : window.ember);
    *
    *    }).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
    *    -- browserify-shim wrapper closed
@@ -123,9 +123,9 @@ function bindWindowWithExports(s, dependencies) {
   // The fact that __browserify_shim_removed_require__ is not defined doesn't matter since we never enter that block.
 
   return dependencies
-      + ';' + shimRequire + '=require;' 
+      + ';' + shimRequire + '=require;'
       + '(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {\n'
-      + s 
+      + s
       + '\n}).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });\n';
 }
 
@@ -134,9 +134,9 @@ function bindWindowWithoutExports(s, dependencies) {
   // therefore it is not a good idea to override the module here, however we need to still disable require
   // all else is similar to @see bindWindowWithExports
   return dependencies
-      + ';' + shimRequire + '=require;' 
+      + ';' + shimRequire + '=require;'
       + '(function browserifyShim(module, define, require) {\n'
-      + s 
+      + s
       + '\n}).call(global, module, undefined, undefined);\n';
 }
 
@@ -178,14 +178,14 @@ module.exports = function shim(file) {
         content = exposify.expose(eg, content);
       }
 
-      if (info.shim) { 
-        
+      if (info.shim) {
+
         // at this point we consider all remaining (not exposified) require statements to be invalid (why else are we shimming this)
         content = rename('require', shimRequire, content);
 
         var transformed = wrap(content, info.shim, info.packageDir, info.browser)
         stream.queue(transformed);
-      } else { 
+      } else {
         stream.queue(content);
       }
 
