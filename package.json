@@ -28,7 +28,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "browserify": "~4.1.2",
+    "browserify": "^5.8.0",
     "jsdom": "~0.7.0",
     "ncp": "~0.5.0",
     "proxyquire": "~0.5.1",
@@ -44,6 +44,6 @@
     "through": "~2.3.4"
   },
   "peerDependencies": {
-    "browserify": ">= 2.3.0 < 5"
+    "browserify": ">= 2.3.0"
   }
 }
