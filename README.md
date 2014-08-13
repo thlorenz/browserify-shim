@@ -181,7 +181,7 @@ We'll show how this works by taking the rather huge yet awesome `THREE.js` libra
 
 ##### 2.a. Add expose global config to external shim config 
 
-In case you are using an extenal shim config, you may achieve the same by specifying the global via an `export`.
+In case you are using an external shim config, you may achieve the same by specifying the global via an `export`.
 
 ```js
 module.exports = {
@@ -189,7 +189,7 @@ module.exports = {
 }
 ```
 
-[more about extenal configs here](#c-config-inside-configshimjs-without-aliases)
+[more about external configs here](#c-config-inside-configshimjs-without-aliases)
 
 **Note:** `THREE.js` attaches `window.THREE`.
 
