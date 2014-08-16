@@ -63,9 +63,8 @@ module.exports = function testLib(t, opts) {
       './lib/resolve-shims': resolveShims
     })
 
-    browserify()
+    browserify(entryFile, { fullPaths: true })
       .transform(shim)
-      .require(entryFile)
       .bundle(function (err, src) {
 
         fs.unlinkSync(file);

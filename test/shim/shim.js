@@ -27,9 +27,8 @@ test('when I shim "jquery" to a crippled jquery filerequire it inside the entry 
     './lib/resolve-shims': resolveShims
   })
 
-  browserify()
+  browserify(entry, { fullPaths: true })
     .transform(shim)
-    .require(entry)
     .bundle(function (err, src) {
       if (err) { t.fail(err); return t.end() }
 

@@ -25,7 +25,7 @@
 }
 ```
 
-    browserify . -d -o bundle.js
+    browserify . -d --full-paths -o bundle.js
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -102,6 +102,8 @@ when generating the bundle.
 In most cases you want to install it as a [devDependency](https://npmjs.org/doc/json.html#devDependencies) via:
 
     npm install -D browserify-shim
+
+**NOTE**: for browserify v5, in browserify options `fullPaths: true` must be enabled in browserify options; otherwise ids are used by browserify and browserify-shim can't detect filenames properly; this can also be enabled on the command line of browserify by `--full-paths`
 
 #### 2. Register browserify-shim as a transform with browserify
 
