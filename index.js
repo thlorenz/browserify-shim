@@ -156,12 +156,18 @@ function wrap(content, config, packageRoot, browserAliases) {
   return boundWindow;
 }
 
+// the main browserify transformation function
+// should return a through-stream
 module.exports = function shim(file) {
   var content = '';
   var stream = through(write, end);
   return stream;
 
+  // build up the entire file first
   function write(buf) { content += buf; }
+
+  // when we reach end of file
+  // wrap the entire file contents as necessary
   function end() {
     var messages = [];
     resolveShims(file, messages, function (err, info) {

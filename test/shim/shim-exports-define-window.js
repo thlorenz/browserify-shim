@@ -24,9 +24,8 @@ test('when a module only attaches to the window after checking for module.export
     './lib/resolve-shims': resolveShims
   })
 
-  browserify()
+  browserify(entry, { fullPaths: true})
     .transform(shim)
-    .require(entry)
     .bundle(function (err, src) {
       if (err) return t.fail(err)
 

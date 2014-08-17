@@ -22,9 +22,8 @@ test('when I shim a module that declares its export as a var on the root level i
     './lib/resolve-shims': resolveShims
   })
 
-  browserify()
+  browserify(entry, { fullPaths: true })
     .transform(shim)
-    .require(entry)
     .bundle(function (err, src) {
       if (err) { t.fail(err); return t.end() }
 
