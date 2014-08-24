@@ -1,5 +1,7 @@
 'use strict';
 /*jshint asi: true */
+var browserify_version = require('./utils/browserify-version');
+
 var browserify = require('browserify')
   , test = require('tap').test
   , vm = require('vm')
@@ -48,6 +50,7 @@ test('when I shim a module that declares its export as a var on the root level i
   });
 })
 
+if (browserify_version >= 5)
 test('when I shim a module that declares its export as a var on the root level instead of attaching it to the window, using fullPaths', function (t) {
   runBundle(true, function (err, require_) {
     if (err) { t.fail(err); return t.end() }

@@ -4,7 +4,12 @@
   "description": "Makes CommonJS-incompatible modules browserifyable.",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js && tap test/shim/*.js",
+    "test-main": "tap test/*.js && tap test/shim/*.js",
+    "test-b2": "npm rm browserify && npm install browserify@2 && npm run test-main",
+    "test-b3": "npm rm browserify && npm install browserify@3 && npm run test-main",
+    "test-b4": "npm rm browserify && npm install browserify@4 && npm run test-main",
+    "test-b5": "npm rm browserify && npm install browserify@5 && npm run test-main",
+    "test": "npm run test-b2 && npm run test-b3 && npm run test-b4 && npm run test-b5",
     "shim-jquery": "npm install opener && cd ./examples/shim-jquery && npm install && node build.js && opener index.html",
     "shim-jquery-diag": "npm install opener && cd ./examples/shim-jquery && npm install && node build-diag.js && opener index.html",
     "expose-jquery": "npm install opener && cd ./examples/expose-jquery && npm install && node build.js && opener index.html",
@@ -28,7 +33,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "browserify": "^5.8.0",
+    "browserify": "~5.10.1",
     "jsdom": "~0.7.0",
     "ncp": "~0.5.0",
     "proxyquire": "~0.5.1",

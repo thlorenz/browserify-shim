@@ -1,5 +1,7 @@
 'use strict';
 /*jshint asi: true */
+
+var browserify_version = require('./utils/browserify-version');
 var browserify =  require('browserify')
   , test       =  require('tap').test
   , vm         =  require('vm')
@@ -47,6 +49,7 @@ test('when a module only attaches to the window after checking for module.export
   })
 })
 
+if (browserify_version >= 5)
 test('when a module only attaches to the window after checking for module.exports and define and we browserify it, using fullPaths', function (t) {
   runBundle(true, function (err, require_) {
     if (err) { t.fail(err); return t.end() }

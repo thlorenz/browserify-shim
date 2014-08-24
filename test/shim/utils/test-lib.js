@@ -1,6 +1,8 @@
 'use strict';
 /*jshint asi: true*/
 
+var browserify_version = require('../utils/browserify-version');
+
 var request    =  require('request')
   , fs         =  require('fs')
   , vm         =  require('vm')
@@ -63,8 +65,12 @@ module.exports = function testLib(t, opts) {
       './lib/resolve-shims': resolveShims
     })
 
-    // testing with and without fullPaths option
-    t.plan(opts.asserts * 2)
+    // testing with and without fullPaths option (introduced in browserify version 5)
+    if (browserify_version >= 5)
+      t.plan(opts.asserts * 2)
+    else
+      t.plan(opts.asserts)
+
 
     t.on('end', function () {
       fs.unlinkSync(file);
@@ -90,6 +96,7 @@ module.exports = function testLib(t, opts) {
       runTest(t, require_(1));
     })
 
+    if (browserify_version >= 5)
     runBundle(true, function (err, require_) {
       if (err) { t.fail(err); return t.end() } 
       runTest(t, require_(entryFile));

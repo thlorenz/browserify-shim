@@ -1,5 +1,6 @@
 'use strict';
 /*jshint asi: true */
+var browserify_version = require('./utils/browserify-version');
 
 var browserify = require('browserify')
   , test = require('tap').test
@@ -47,6 +48,7 @@ test('when I shim "jquery" to a crippled jquery filerequire it inside the entry 
   })
 })
 
+if (browserify_version >= 5)
 test('when I shim "jquery" to a crippled jquery filerequire it inside the entry file, using fullPaths', function (t) {
   runBundle(true, function (err, require_) {
     if (err) { t.fail(err); return t.end() }

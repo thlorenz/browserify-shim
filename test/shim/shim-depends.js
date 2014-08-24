@@ -1,5 +1,7 @@
 'use strict';
 /*jshint asi: true */
+var browserify_version = require('./utils/browserify-version');
+
 var browserify = require('browserify')
   , test = require('tap').test
   , vm = require('vm')
@@ -71,6 +73,7 @@ test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
   })
 })
 
+if (browserify_version >= 5)
 test('\nwhen I shim "jquery" and shim a lib that depends on it, using fullPaths', function (t) {
 
   var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery');
@@ -124,6 +127,7 @@ test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends
   })
 })
 
+if (browserify_version >= 5)
 test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends on both, using fullPaths', function (t) {
 
   var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery-and-_');
