@@ -7,10 +7,10 @@ var test = require('tap').test
 
 test('impressjs 0.5.3', function (t) {
   var shimConfig = { exports: 'impress' }
-  t.plan(1)
   testLib(t, { 
       name: 'impress.js'
     , test: function (t, resolved) { t.equals(typeof resolved().init, 'function', 'shims impressjs 0.5.3') }
+    , asserts: 1
     , shimConfig: shimConfig
     , baseUrl: baseUrl + '0.5.3/js/'
   })

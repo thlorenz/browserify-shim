@@ -10,11 +10,10 @@ function inspect(obj, depth) {
   console.error(require('util').inspect(obj, false, depth || 5, true));
 }
 
-test('when I shim "jquery" to a crippled jquery filerequire it inside the entry file', function (t) {
+var entry = require.resolve('./fixtures/entry-requires-jquery.js');
+var file = require.resolve('./fixtures/shims/crippled-jquery')
 
-  var entry = require.resolve('./fixtures/entry-requires-jquery.js');
-  var file = require.resolve('./fixtures/shims/crippled-jquery')
-
+function runBundle(fullPaths, cb) {
   function resolveShims (file_, msgs, cb) {
     var res = file_ === file
       ? { exports: '$' } 
@@ -27,17 +26,32 @@ test('when I shim "jquery" to a crippled jquery filerequire it inside the entry 
     './lib/resolve-shims': resolveShims
   })
 
-  browserify()
+  browserify(entry, { fullPaths: fullPaths })
     .transform(shim)
-    .require(entry)
     .bundle(function (err, src) {
-      if (err) { t.fail(err); return t.end() }
+      if (err) return cb(err);
 
       var ctx = { window: {}, console: console };
       ctx.self = ctx.window;
       var require_ = vm.runInNewContext(src, ctx);
-
-      t.equal(require_(entry).getJqueryVersion(), '1.8.3', 'requires crippled jquery and gets version');
-      t.end()
+      cb(null, require_)
     })
+}
+
+test('when I shim "jquery" to a crippled jquery filerequire it inside the entry file', function (t) {
+  runBundle(false, function (err, require_) {
+    if (err) { t.fail(err); return t.end() }
+    
+    t.equal(require_(1).getJqueryVersion(), '1.8.3', 'requires crippled jquery and gets version');
+    t.end()
+  })
+})
+
+test('when I shim "jquery" to a crippled jquery filerequire it inside the entry file, using fullPaths', function (t) {
+  runBundle(true, function (err, require_) {
+    if (err) { t.fail(err); return t.end() }
+    
+    t.equal(require_(entry).getJqueryVersion(), '1.8.3', 'requires crippled jquery and gets version');
+    t.end()
+  })
 })

@@ -32,8 +32,7 @@ function inspect(obj, depth) {
   console.error(require('util').inspect(obj, false, depth || 5, true));
 }
 
-test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
-
+function runFirstBundle(entry, fullPaths, cb) {
   function resolveShims (file_, msgs, cb) {
     var res;
     if (file_ === jqueryPath) res = jquery;
@@ -46,28 +45,46 @@ test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
     './lib/resolve-shims': resolveShims
   })
   
-  var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery');
-
-  browserify()
+  browserify(entry, { fullPaths: fullPaths })
     .transform(shim)
-    .require(entry)
     .bundle(function (err, src) {
-      if (err) t.fail(err);
+      if (err) return cb(err);
 
       var ctx = { window: {}, console: console };
       ctx.self = ctx.window;
-      vm.runInNewContext(src, ctx);
-      var require_ = ctx.require;
-      var dep = ctx.require(entry);
+      
+      var require_ = vm.runInNewContext(src, ctx);
+      cb(null, require_)
+    })
+}
 
-      t.equal(dep.jqVersion, '1.8.3', 'when dependent gets required, $ is attached to the window');
-      t.end()
-    });
+test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
 
-});
+  var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery');
 
-test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends on both', function (t) {
+  runFirstBundle(entry, false, function (err, require_) {
+    if (err) { t.fail(err); return t.end(); }
+    
+    var dep = require_(1);
+    t.equal(dep.jqVersion, '1.8.3', 'when dependent gets required, $ is attached to the window');
+    t.end()
+  })
+})
 
+test('\nwhen I shim "jquery" and shim a lib that depends on it, using fullPaths', function (t) {
+
+  var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery');
+
+  runFirstBundle(entry, true, function (err, require_) {
+    if (err) { t.fail(err); return t.end(); }
+    
+    var dep = require_(entry);
+    t.equal(dep.jqVersion, '1.8.3', 'when dependent gets required, $ is attached to the window');
+    t.end()
+  })
+})
+
+function runSecondBundle(entry, fullPaths, cb) {
   function resolveShims (file_, msgs, cb) {
     var res;
     if (file_ === jqueryPath) res = jquery;
@@ -80,22 +97,43 @@ test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends
   var shim = proxyquire('../../', {
     './lib/resolve-shims': resolveShims
   })
-  var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery-and-_');
 
-  browserify()
+  browserify(entry, { fullPaths: fullPaths })
     .transform(shim)
-    .require(entry)
     .bundle(function (err, src) {
-      if (err) t.fail(err);
+      if (err) return cb(err);
 
       var ctx = { window: {}, console: console };
       ctx.self = ctx.window;
-      vm.runInNewContext(src, ctx);
-      var require_ = ctx.require;
-      var dep = ctx.require(entry);
-
-      t.equal(dep.jqVersion, '1.8.3', 'when multidependent gets required, $ is attached to the window');
-      t.equal(dep._(), 'super underscore', 'and _ is attached to the window');
-      t.end()
+      var require_ = vm.runInNewContext(src, ctx);
+      cb(null, require_)
     })
-});
+}
+
+test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends on both', function (t) {
+
+  var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery-and-_');
+  runSecondBundle(entry, false, function (err, require_) {
+    if (err) { t.fail(err); return t.end(); }
+
+    var dep = require_(1);
+
+    t.equal(dep.jqVersion, '1.8.3', 'when multidependent gets required, $ is attached to the window');
+    t.equal(dep._(), 'super underscore', 'and _ is attached to the window');
+    t.end()
+  })
+})
+
+test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends on both, using fullPaths', function (t) {
+
+  var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery-and-_');
+  runSecondBundle(entry, true, function (err, require_) {
+    if (err) { t.fail(err); return t.end(); }
+
+    var dep = require_(entry);
+
+    t.equal(dep.jqVersion, '1.8.3', 'when multidependent gets required, $ is attached to the window');
+    t.equal(dep._(), 'super underscore', 'and _ is attached to the window');
+    t.end()
+  })
+})

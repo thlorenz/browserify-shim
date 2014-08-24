@@ -63,23 +63,37 @@ module.exports = function testLib(t, opts) {
       './lib/resolve-shims': resolveShims
     })
 
-    browserify()
-      .transform(shim)
-      .require(entryFile)
-      .bundle(function (err, src) {
+    // testing with and without fullPaths option
+    t.plan(opts.asserts * 2)
 
-        fs.unlinkSync(file);
+    t.on('end', function () {
+      fs.unlinkSync(file);
+    })
 
-        if (err) { t.fail(err); return t.end() } 
+    function runBundle(fullPaths, cb) {
+      browserify(entryFile, { fullPaths: fullPaths })
+        .transform(shim)
+        .bundle(function (err, src) {
+          if (err) return cb(err);
 
-        var window = jsdom(html).createWindow()
-          , context = vm.createContext(window)
+          var window = jsdom(html).createWindow()
+            , context = vm.createContext(window)
 
-        Object.keys(window).forEach(function (k) { context[k] = window[k] })
-        var require_ = vm.runInContext(src, context);
+          Object.keys(window).forEach(function (k) { context[k] = window[k] })
+          var require_ = vm.runInContext(src, context);
+          cb(null, require_)
+        })
+    }
 
-        runTest(t, require_(entryFile));
-        t.end();
-      });
-  });
-};
+    runBundle(false, function (err, require_) {
+      if (err) { t.fail(err); return t.end() } 
+      runTest(t, require_(1));
+    })
+
+    runBundle(true, function (err, require_) {
+      if (err) { t.fail(err); return t.end() } 
+      runTest(t, require_(entryFile));
+    })
+  })
+
+}

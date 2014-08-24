@@ -8,10 +8,10 @@ var testLib = require('./utils/test-lib')
 // Not necessary to shim underscore, but serves as a good test case since it tries very hard to interface with commonJS
 test('underscore master', function (t) {
   var shimConfig = { exports: '_' }
-  t.plan(1)
   testLib(t, { 
       name: 'underscore.js'
     , test: function (t, resolved) { t.equals(typeof resolved().each, 'function', 'shims underscore master') }
+    , asserts: 1
     , shimConfig: shimConfig
     , baseUrl: baseUrl
   })
