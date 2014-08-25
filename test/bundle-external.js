@@ -7,15 +7,15 @@ var browserify = require('browserify')
 
 function bundleNcheck(relPath, t) {
   browserify( { ignoreGlobals: true })
-    .require(require.resolve(relPath + '/../vendor/non-cjs.js'))
-    .require(require.resolve(relPath + '/../vendor/non-cjs-dep.js'))
+    .require(require.resolve(relPath + '/../vendor/non-cjs.js'), { expose: 'non-cjs' })
+    .require(require.resolve(relPath + '/../vendor/non-cjs-dep.js'), { expose: 'non-cjs-dep' })
     .bundle(function (err, srcLibs) {
       if (err) { t.fail(err); return t.end(); }
 
       browserify( { ignoreGlobals: true })
         .require(require.resolve(relPath))
-        .external(require.resolve(relPath + '/../vendor/non-cjs.js'))
-        .external(require.resolve(relPath + '/../vendor/non-cjs-dep.js'))
+        .external('non-cjs')
+        .external('non-cjs-dep')
         .bundle(function (err, src) {
           if (err) { t.fail(err); return t.end(); }
 
