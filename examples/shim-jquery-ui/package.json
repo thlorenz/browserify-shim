@@ -1,0 +1,33 @@
+{
+  "name": "shim-jquery-ui",
+  "version": "0.0.0",
+  "description": "Example of using browserify-shim to shim jquery-ui for use with browserify",
+  "main": "./js/entry.js",
+  "browser": {
+    "jquery": "./node_modules/jquery/dist/jquery.js"
+  },
+  "browserify-shim": {
+    "jquery": "$",
+    "jquery-ui": {"depends": "jquery:$"}
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "author": "Thorsten Lorenz",
+  "license": "BSD",
+  "dependencies": {
+    "request": "~2.12.0"
+  },
+  "devDependencies": {
+    "browserify": "~2.36.1",
+    "browserify-shim": "~3.0.0",
+    "jquery": "^2.1.1",
+    "jquery-ui": "^1.10.5"
+  }
+}
