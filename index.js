@@ -141,7 +141,10 @@ function bindWindowWithoutExports(s, dependencies) {
 }
 
 function moduleExport(exp) {
-  return format('\n; browserify_shim__define__module__export__(typeof %s != "undefined" ? %s : window.%s);\n', exp, exp, exp);
+  return format('\n; browserify_shim__define__module__export__(typeof %s != "undefined" ? %s : %s);\n'
+                , exp
+                , exp
+                , format(exp.match(/^\'.*\'$/) ? '%s' : 'window.%s', exp));
 }
 
 function wrap(content, config, packageRoot, browserAliases) {
