@@ -50,6 +50,6 @@
     "through": "~2.3.4"
   },
   "peerDependencies": {
-    "browserify": ">= 2.3.0 < 7"
+    "browserify": ">= 2.3.0 < 8"
   }
 }
