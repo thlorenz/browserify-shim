@@ -11,7 +11,8 @@
     "test-b5": "npm rm browserify && npm install browserify@5 && npm run test-main",
     "test-b6": "npm rm browserify && npm install browserify@6 && npm run test-main",
     "test-b7": "npm rm browserify && npm install browserify@7 && npm run test-main",
-    "test": "npm run test-b2 && npm run test-b3 && npm run test-b4 && npm run test-b5 && npm run test-b6 && npm run test-b7",
+    "test-b8": "npm rm browserify && npm install browserify@8 && npm run test-main",
+    "test": "npm run test-b2 && npm run test-b3 && npm run test-b4 && npm run test-b5 && npm run test-b6 && npm run test-b7 && npm run test-b8",
     "shim-jquery": "npm install opener && cd ./examples/shim-jquery && npm install && node build.js && opener index.html",
     "shim-jquery-diag": "npm install opener && cd ./examples/shim-jquery && npm install && node build-diag.js && opener index.html",
     "expose-jquery": "npm install opener && cd ./examples/expose-jquery && npm install && node build.js && opener index.html",
@@ -35,7 +36,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "browserify": "~7.0.0",
+    "browserify": "~8.0.0",
     "jsdom": "~0.7.0",
     "ncp": "~0.5.0",
     "proxyquire": "~0.5.1",
@@ -51,6 +52,6 @@
     "through": "~2.3.4"
   },
   "peerDependencies": {
-    "browserify": ">= 2.3.0 < 8"
+    "browserify": ">= 2.3.0 < 9"
   }
 }
