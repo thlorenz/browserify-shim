@@ -185,7 +185,7 @@ In case you are using an external shim config, you may achieve the same by speci
 
 ```js
 module.exports = {
-  'three.js': { exports: 'global:THREE' }
+  'three': { exports: 'global:THREE' }
 }
 ```
 
