@@ -223,19 +223,6 @@ You may expose files under a different name via the [`browser` field](https://gi
 
 This also allows you to require this module under the alias, i.e.: `var $ = require('jquery')`.
 
-You must use aliases if you want to shim a package installed using npm, even if it has a `main` entry in its `package.json` (e.g. Angular):
-
-```json
-{
-  "browser": {
-    "angular": "./node_modules/angular/angular.js"
-  },
-  "browserify-shim": {
-    "angular": "angular"
-  }
-}
-```
-
 #### c) Provide an external shim config
 
 ```json
