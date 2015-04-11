@@ -344,7 +344,3 @@ The main difference to `a)` is the `depends` field specification. Instead it bei
 - the [tests](https://github.com/thlorenz/browserify-shim/tree/master/test) are a great resource to investigate the
   different ways to configure shims and to understand how shims are applied to packages found inside the `node_modules`
   of your package
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/thlorenz/browserify-shim/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
