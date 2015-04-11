@@ -123,7 +123,7 @@ function bindWindowWithExports(s, dependencies) {
   // The fact that __browserify_shim_removed_require__ is not defined doesn't matter since we never enter that block.
 
   return dependencies
-      + ';' + shimRequire + '=require;' 
+      + '; var ' + shimRequire + '=require;' 
       + '(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {\n'
       + s 
       + '\n}).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });\n';
@@ -134,7 +134,7 @@ function bindWindowWithoutExports(s, dependencies) {
   // therefore it is not a good idea to override the module here, however we need to still disable require
   // all else is similar to @see bindWindowWithExports
   return dependencies
-      + ';' + shimRequire + '=require;' 
+      + '; var ' + shimRequire + '=require;' 
       + '(function browserifyShim(module, define, require) {\n'
       + s 
       + '\n}).call(global, module, undefined, undefined);\n';
