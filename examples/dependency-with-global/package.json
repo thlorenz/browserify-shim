@@ -1,0 +1,24 @@
+{
+  "name": "dependency-with-global",
+  "version": "0.0.0",
+  "description": "Example of using browserify-shim with a dependency that requires a separately loaded global.",
+  "main": "./js/entry.js",
+  "browserify-shim": {
+    "jquery": "global:$"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "repository": "",
+  "author": "Paul Melnikow",
+  "license": "BSD",
+  "dependencies": {
+    "request": "~2.12.0"
+  },
+  "devDependencies": {
+    "browserify": "~2.36.1",
+    "browserify-shim": "~3.2.0"
+  }
+}
