@@ -183,7 +183,7 @@ We'll show how this works by taking the rather huge yet awesome `THREE.js` libra
 
 ##### 2.a. Add expose global config to external shim config 
 
-In case you are using an external shim config, you may achieve the same by specifying the global via an `export`.
+In case you are using an external shim config, you may achieve the same by specifying the global via an `exports`.
 
 ```js
 module.exports = {
