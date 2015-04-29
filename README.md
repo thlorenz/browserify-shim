@@ -115,6 +115,8 @@ Inside `package.json` add:
 }
 ```
 
+Browserify transforms are run in order and may modify your source code along the way. You'll typically want to include browserify-shim last.
+
 #### 3. Provide browserify-shim config
 
 Inside `package.json` add:
