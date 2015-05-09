@@ -5,16 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test-main": "tap test/*.js && tap test/shim/*.js",
-    "test-b2": "npm rm browserify && npm install browserify@2 && npm run test-main",
-    "test-b3": "npm rm browserify && npm install browserify@3 && npm run test-main",
-    "test-b4": "npm rm browserify && npm install browserify@4 && npm run test-main",
-    "test-b5": "npm rm browserify && npm install browserify@5 && npm run test-main",
-    "test-b6": "npm rm browserify && npm install browserify@6 && npm run test-main",
-    "test-b7": "npm rm browserify && npm install browserify@7 && npm run test-main",
-    "test-b8": "npm rm browserify && npm install browserify@8 && npm run test-main",
-    "test-b9": "npm rm browserify && npm install browserify@9 && npm run test-main",
-    "test-b10": "npm rm browserify && npm install browserify@10 && npm run test-main",
-    "test": "npm run test-b2 && npm run test-b3 && npm run test-b4 && npm run test-b5 && npm run test-b6 && npm run test-b7 && npm run test-b8 && npm run test-b9 && npm run test-b10",
+    "test": "test-peer-range browserify",
     "shim-jquery": "npm install opener && cd ./examples/shim-jquery && npm install && node build.js && opener index.html",
     "shim-jquery-diag": "npm install opener && cd ./examples/shim-jquery && npm install && node build-diag.js && opener index.html",
     "expose-jquery": "npm install opener && cd ./examples/expose-jquery && npm install && node build.js && opener index.html",
@@ -46,7 +37,8 @@
     "proxyquire": "~0.5.1",
     "request": "~2.12.0",
     "rimraf": "~2.2.6",
-    "tap": "~0.3.3"
+    "tap": "~0.3.3",
+    "test-peer-range": "^1.0.1"
   },
   "dependencies": {
     "exposify": "~0.2.0",
