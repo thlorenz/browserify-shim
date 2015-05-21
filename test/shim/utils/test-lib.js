@@ -82,7 +82,7 @@ module.exports = function testLib(t, opts) {
         .bundle(function (err, src) {
           if (err) return cb(err);
 
-          var window = jsdom(html).createWindow()
+          var window = jsdom(html).defaultView
             , context = vm.createContext(window)
 
           Object.keys(window).forEach(function (k) { context[k] = window[k] })

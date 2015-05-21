@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "exposify": "~0.2.0",
+    "jsdom": "^5.4.2",
     "mothership": "~0.2.0",
     "rename-function-calls": "~0.1.0",
     "resolve": "~0.6.1",
