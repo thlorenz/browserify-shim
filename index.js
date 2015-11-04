@@ -156,7 +156,8 @@ function wrap(content, config, packageRoot, browserAliases) {
   return boundWindow;
 }
 
-module.exports = function shim(file) {
+module.exports = function shim(file, opts) {
+  var shimConfig = opts.shim || {};
   var content = '';
   var stream = through(write, end);
   return stream;
@@ -164,7 +165,7 @@ module.exports = function shim(file) {
   function write(buf) { content += buf; }
   function end() {
     var messages = [];
-    resolveShims(file, messages, function (err, info) {
+    resolveShims(file, messages, shimConfig, function (err, info) {
       if (err) {
         stream.emit('error', err);
         return stream.queue(null);
