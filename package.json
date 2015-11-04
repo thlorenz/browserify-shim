@@ -45,7 +45,8 @@
     "mothership": "~0.2.0",
     "rename-function-calls": "~0.1.0",
     "resolve": "~0.6.1",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "xtend": "^4.0.1"
   },
   "peerDependencies": {
     "browserify": ">= 2.3.0 < 13"
