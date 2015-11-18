@@ -113,15 +113,3 @@ test('\nno dependencies, external shims, no expose, $ exposified as jquery', fun
     t.end();
   });
 })
-
-test('\nprovided config using transform options, no dependencies, external shims, no expose, $ exposified as jquery', function (t) {
-  resolve(require.resolve('./exposify/transformoptionsshim/vendor/non-cjs'), msgs, {
-    'non-cjs': { exports : 'noncjs' },
-    'jquery': { exports: 'global:$' }
-  }, function (err, res) {
-    if (err) { t.fail(err); return t.end(); }
-    t.deepEqual(res.shim, { exports: 'noncjs', depends: undefined }, 'resolves noncjs shim correctly')
-    t.deepEqual(res.exposeGlobals, { jquery: '$' }, 'resolves expose globals correctly')
-    t.end();
-  });
-})
