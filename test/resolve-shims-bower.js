@@ -13,7 +13,7 @@ function inspect(obj, depth) {
 }
 
 test('\nresolving a bower component that is shimmed', function (t) {
-  resolve(require.resolve('./bower/components/jquery-ui/ui/jquery.ui.position.js'), msgs, function (err, res) {
+  resolve(require.resolve('./bower/components/jquery-ui/ui/jquery.ui.position.js'), msgs, null, function (err, res) {
 
     if (err) { t.fail(err); return t.end(); }
     t.deepEqual(res.shim, { exports: null, depends: { jquery: 'jQuery' } }, 'resolves shim correctly')
