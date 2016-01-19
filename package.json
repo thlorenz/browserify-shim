@@ -1,6 +1,6 @@
 {
   "name": "browserify-shim",
-  "version": "3.8.11",
+  "version": "3.8.12",
   "description": "Makes CommonJS-incompatible modules browserifyable.",
   "main": "index.js",
   "scripts": {
@@ -31,7 +31,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "browserify": "^12.0.0",
+    "browserify": "^13.0.0",
     "jsdom": "^5.4.2",
     "ncp": "~0.5.0",
     "proxyquire": "~0.5.1",
@@ -49,6 +49,6 @@
     "xtend": "~4.0.1"
   },
   "peerDependencies": {
-    "browserify": ">= 2.3.0 < 13"
+    "browserify": ">= 2.3.0 < 14"
   }
 }
