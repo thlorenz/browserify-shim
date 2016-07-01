@@ -93,6 +93,8 @@ granted that you specify the shim config inside the `package.json`.
 When `browserify` resolves your package it will run the `browserify-shim` transform and thus shim what's necessary
 when generating the bundle.
 
+`browserify-shim` walks upwards from each source file and uses the first `"browserify-shim"` configuration it finds in a `package.json` file. You **can't** shim files outside your project from your project's package you. You **can** add multiple `package.json` files as long as browserify-shim can always find a package above each source file with the right configuration.
+
 ## API
 
 ### You Will Always
