@@ -1,3 +1,4 @@
+
 #browserify-shim [![build status](https://secure.travis-ci.org/thlorenz/browserify-shim.png?branch=master)](http://travis-ci.org/thlorenz/browserify-shim)
 
 [![NPM](https://nodei.co/npm/browserify-shim.png?downloads=true&stars=true)](https://nodei.co/npm/browserify-shim/)
@@ -348,3 +349,12 @@ The main difference to `a)` is the `depends` field specification. Instead it bei
 - the [tests](https://github.com/thlorenz/browserify-shim/tree/master/test) are a great resource to investigate the
   different ways to configure shims and to understand how shims are applied to packages found inside the `node_modules`
   of your package
+
+## Troubleshooting
+
+If you are getting this error: 
+
+> Error: Unable to find a browserify-shim config section in the
+> package.json for...
+
+The correct setup is to have all your files inside (or below) the dir that contains the package.json
