@@ -1,4 +1,4 @@
-#browserify-shim [![build status](https://secure.travis-ci.org/thlorenz/browserify-shim.png?branch=master)](http://travis-ci.org/thlorenz/browserify-shim)
+#browserify-shim [![build status](https://secure.travis-ci.org/thlorenz/browserify-shim.svg?branch=master)](http://travis-ci.org/thlorenz/browserify-shim)
 
 [![NPM](https://nodei.co/npm/browserify-shim.png?downloads=true&stars=true)](https://nodei.co/npm/browserify-shim/)
 
