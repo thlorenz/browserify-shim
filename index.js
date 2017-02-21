@@ -144,6 +144,10 @@ function moduleExport(exp) {
   return format('\n; browserify_shim__define__module__export__(typeof %s != "undefined" ? %s : window.%s);\n', exp, exp, exp);
 }
 
+function removeBOM(content) {
+  return content.replace(/^\uFEFF/,'');
+}
+
 function wrap(content, config, packageRoot, browserAliases) {
   var exported = config.exports
       ? content + moduleExport(config.exports)
@@ -172,6 +176,8 @@ module.exports = function shim(file) {
 
       debug('');
       debug.inspect({ file: file, info: info, messages: messages });
+
+      content = removeBOM(content);
 
       var eg = info.exposeGlobals;
       if(eg && Object.keys(eg)) {
