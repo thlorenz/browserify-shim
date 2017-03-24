@@ -41,7 +41,7 @@
     "test-peer-range": "^1.0.1"
   },
   "dependencies": {
-    "exposify": "~0.4.3",
+    "exposify": "~0.5.0",
     "mothership": "~0.2.0",
     "rename-function-calls": "~0.1.0",
     "resolve": "~0.6.1",
