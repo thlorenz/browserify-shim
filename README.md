@@ -249,6 +249,14 @@ Simply set the flag when building your bundle, i.e.:
 
 or in a `build.js` script add: `process.env.BROWSERIFYSHIM_DIAGNOSTICS=1` to the top.
 
+#### e) Shim a non-CJS npm module
+
+Not all npm modules support cjs out of the box.  Browserify-shim can help, but still requires that you specify the module + file in the browser field of package.js.  For example:
+
+    "browser": {
+        "angular": "./node_modules/angular/angular.js"
+    },
+
 ## Multi Shim Example including dependencies
 
 Some libraries depend on other libraries to have attached their exports to the window for historical reasons :(.
