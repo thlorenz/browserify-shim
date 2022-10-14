@@ -1,6 +1,6 @@
 {
   "name": "browserify-shim",
-  "version": "3.8.15",
+  "version": "3.8.16",
   "description": "Makes CommonJS-incompatible modules browserifyable.",
   "main": "index.js",
   "scripts": {
