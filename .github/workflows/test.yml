@@ -14,7 +14,7 @@ jobs:
         node-version:
           # https://nodejs.org/docs/latest-v9.x/api/deprecations.html#deprecations_dep0022_os_tmpdir
           # https://github.com/nodejs/help/issues/2613
-          - '10'
+          - '0.12'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
