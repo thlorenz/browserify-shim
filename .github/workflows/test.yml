@@ -12,9 +12,8 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - '16'
-          - '18'
-          - '20'
+          # https://nodejs.org/docs/latest-v9.x/api/deprecations.html#deprecations_dep0022_os_tmpdir
+          - '12'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
