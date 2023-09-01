@@ -17,4 +17,6 @@ jobs:
       - run: npm install
       - run: npm test
         env:
+          # Node.js/io.js bundle their own CA store, which is now substantially out of date. io.js predated the `--use-openssl-ca` flag, so we have to disable TLS verification entirely.
+          # Upon upgrading this test suite to a modern Node.js version, this should be removed.
           NODE_TLS_REJECT_UNAUTHORIZED: '0'
