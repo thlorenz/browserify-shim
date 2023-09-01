@@ -16,3 +16,5 @@ jobs:
           node-version: iojs
       - run: npm install
       - run: npm test
+        env:
+          NODE_TLS_REJECT_UNAUTHORIZED: '0'
