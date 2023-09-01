@@ -1,4 +1,4 @@
-# browserify-shim [![build status](https://secure.travis-ci.org/thlorenz/browserify-shim.svg?branch=master)](http://travis-ci.org/thlorenz/browserify-shim)
+# browserify-shim
 
 ### Make CommonJS-Incompatible Files Browserifyable
 
