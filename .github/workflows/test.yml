@@ -9,16 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version:
-          # https://nodejs.org/docs/latest-v9.x/api/deprecations.html#deprecations_dep0022_os_tmpdir
-          # https://github.com/nodejs/help/issues/2613
-          - '0.12'
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: dcodeIO/setup-node-nvm@v5
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: iojs
       - run: npm install
       - run: npm test
