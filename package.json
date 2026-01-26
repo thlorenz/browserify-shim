@@ -4,7 +4,7 @@
   "description": "Makes CommonJS-incompatible modules browserifyable.",
   "main": "index.js",
   "scripts": {
-    "test-main": "tap test/bundle-deps.js test/bundle-expose-globals.js test/bundle-invalid-require.js test/bundle-multideps.js test/bundle-nodeps.js test/bundle-packs.js test/parse-inline-shim.js test/resolve-shims-bower.js test/resolve-shims.js test/shim/*.js",
+    "test-main": "tap test/*.js && tap test/shim/*.js",
     "test": "test-peer-range browserify",
     "shim-jquery": "npm install opener && cd ./examples/shim-jquery && npm install && node build.js && opener index.html",
     "shim-jquery-diag": "npm install opener && cd ./examples/shim-jquery && npm install && node build-diag.js && opener index.html",
