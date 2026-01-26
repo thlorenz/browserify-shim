@@ -14,7 +14,7 @@ function bundleNcheck(relPath, t) {
   browserify( { ignoreGlobals: true })
     .require(require.resolve(relPath))
     .bundle(function (err, src) {
-      if (err) { t.fail(err); return t.end(); }
+      if (err) { t.fail(err.message); return t.end(); }
 
       var ctx = { window: { $: jquery }, console: console };
       ctx.self = ctx.window;
