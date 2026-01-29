@@ -65,7 +65,7 @@ test('\nwhen I shim "jquery" and shim a lib that depends on it', function (t) {
   var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery');
 
   runFirstBundle(entry, false, function (err, require_) {
-    if (err) { t.fail(err); return t.end(); }
+    if (err) { t.fail(err.message); return t.end(); }
     
     var dep = require_(1);
     t.equal(dep.jqVersion, '1.8.3', 'when dependent gets required, $ is attached to the window');
@@ -79,7 +79,7 @@ test('\nwhen I shim "jquery" and shim a lib that depends on it, using fullPaths'
   var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery');
 
   runFirstBundle(entry, true, function (err, require_) {
-    if (err) { t.fail(err); return t.end(); }
+    if (err) { t.fail(err.message); return t.end(); }
     
     var dep = require_(entry);
     t.equal(dep.jqVersion, '1.8.3', 'when dependent gets required, $ is attached to the window');
@@ -117,7 +117,7 @@ test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends
 
   var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery-and-_');
   runSecondBundle(entry, false, function (err, require_) {
-    if (err) { t.fail(err); return t.end(); }
+    if (err) { t.fail(err.message); return t.end(); }
 
     var dep = require_(1);
 
@@ -132,7 +132,7 @@ test('\nwhen I shim "jquery" and _ lib in debug mode and shim a lib that depends
 
   var entry = require.resolve('./fixtures/entry-requires-depend-on-jquery-and-_');
   runSecondBundle(entry, true, function (err, require_) {
-    if (err) { t.fail(err); return t.end(); }
+    if (err) { t.fail(err.message); return t.end(); }
 
     var dep = require_(entry);
 

@@ -82,10 +82,17 @@ module.exports = function testLib(t, opts) {
         .bundle(function (err, src) {
           if (err) return cb(err);
 
-          var window = jsdom(html).defaultView
-            , context = vm.createContext(window)
+          var domWindow = jsdom(html).defaultView
+            , sandbox = {}
 
-          Object.keys(window).forEach(function (k) { context[k] = window[k] })
+          for (var k in domWindow) {
+            try { sandbox[k] = domWindow[k] } catch (e) {}
+          }
+          sandbox.document = domWindow.document;
+          sandbox.navigator = domWindow.navigator;
+          sandbox.window = sandbox;
+          sandbox.self = sandbox;
+          var context = vm.createContext(sandbox)
           var require_ = vm.runInContext(src, context);
           cb(null, require_)
         })
