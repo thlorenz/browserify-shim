@@ -45,7 +45,7 @@
     "mothership": "~0.3.0",
     "rename-function-calls": "~0.1.0",
     "resolve": "~0.6.1",
-    "through": "~2.3.4"
+    "@ljharb/through": "^2.3.9"
   },
   "peerDependencies": {
     "browserify": ">= 2.3"
