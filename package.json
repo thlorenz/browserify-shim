@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/thlorenz/browserify-shim.git"
+    "url": "git+https://github.com/thlorenz/browserify-shim.git"
   },
   "keywords": [
     "browserify",
